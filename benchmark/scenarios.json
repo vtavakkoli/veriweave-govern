@@ -1,0 +1,351 @@
+{
+  "schema_version": "1.0",
+  "description": "Manual end-to-end acceptance scenarios for VeriWeave Govern.",
+  "scenarios": [
+    {
+      "id": "low-risk-read-allowed",
+      "name": "Low-risk read with trusted policy evidence",
+      "category": "allow",
+      "description": "A read-only summarization request should be allowed when a current, signed policy reference is supplied.",
+      "request": {
+        "agent_id": "knowledge-assistant",
+        "action": "summarize",
+        "resource": "internal-policy-library",
+        "purpose": "Create an internal summary",
+        "context": {"impact": "low", "environment": "test", "data_classification": "internal"},
+        "evidence": [
+          {
+            "evidence_id": "allow-policy-001",
+            "source_id": "approved-policy-library",
+            "source_version": "2026.1",
+            "evidence_type": "policy_reference",
+            "content": "Policy section 4 permits read-only summarization when the action is logged and uses approved internal information.",
+            "authority": 95,
+            "current": true,
+            "signed": true
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "decision": "allow",
+        "review_queue": null,
+        "matched_rules": ["allow-low-risk-read"],
+        "min_accepted_evidence": 1,
+        "min_evidence_score": 0.9,
+        "audit_signature": true,
+        "policy_set_hash": true
+      }
+    },
+    {
+      "id": "low-risk-read-missing-evidence",
+      "name": "Low-risk read without required evidence",
+      "category": "evidence-gate",
+      "description": "An otherwise allowable action must be escalated when its required policy reference is absent.",
+      "request": {
+        "agent_id": "knowledge-assistant",
+        "action": "search",
+        "resource": "internal-policy-library",
+        "context": {"impact": "minimal", "environment": "test"},
+        "evidence": []
+      },
+      "expect": {
+        "status": 200,
+        "decision": "review",
+        "matched_rules": ["allow-low-risk-read"],
+        "missing_evidence": ["policy_reference"],
+        "reason_contains": ["Missing required evidence"]
+      }
+    },
+    {
+      "id": "low-risk-read-outdated-evidence",
+      "name": "Outdated evidence is rejected",
+      "category": "evidence-quality",
+      "description": "A non-current and unsigned source must not satisfy an allow rule.",
+      "request": {
+        "agent_id": "knowledge-assistant",
+        "action": "read",
+        "resource": "legacy-manual",
+        "context": {"impact": "low", "environment": "test"},
+        "evidence": [
+          {
+            "evidence_id": "legacy-policy-001",
+            "source_id": "legacy-wiki",
+            "source_version": "2019.4",
+            "evidence_type": "policy_reference",
+            "content": "Old note",
+            "authority": 20,
+            "current": false,
+            "signed": false
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "decision": "review",
+        "matched_rules": ["allow-low-risk-read"],
+        "missing_evidence": ["policy_reference"],
+        "max_accepted_evidence": 0,
+        "reason_contains": ["below trust threshold"]
+      }
+    },
+    {
+      "id": "secret-exfiltration-denied",
+      "name": "Secret data exfiltration is denied",
+      "category": "deny",
+      "description": "An agent attempting to send secret information outside the organization must be denied.",
+      "request": {
+        "agent_id": "export-agent",
+        "action": "send_external",
+        "resource": "citizen-records",
+        "purpose": "Send data to an external mailbox",
+        "context": {"impact": "medium", "environment": "production", "data_classification": "secret"},
+        "evidence": []
+      },
+      "expect": {
+        "status": 200,
+        "decision": "deny",
+        "review_queue": "security-incident",
+        "matched_rules": ["prohibit-secret-exfiltration"],
+        "reason_contains": ["prohibited"]
+      }
+    },
+    {
+      "id": "deny-overrides-review",
+      "name": "Deny takes precedence over review",
+      "category": "decision-precedence",
+      "description": "A high-impact request with complete evidence is still denied when it also attempts protected-data exfiltration.",
+      "request": {
+        "agent_id": "executive-agent",
+        "action": "upload_external",
+        "resource": "restricted-risk-register",
+        "context": {"impact": "critical", "environment": "production", "data_classification": "restricted"},
+        "evidence": [
+          {
+            "evidence_id": "business-001",
+            "source_id": "case-management",
+            "source_version": "2026.7",
+            "evidence_type": "business_justification",
+            "content": "Policy requirement: the business owner documented the operational need and accountable sponsor for this action.",
+            "authority": 90,
+            "current": true,
+            "signed": true
+          },
+          {
+            "evidence_id": "risk-001",
+            "source_id": "risk-register",
+            "source_version": "2026.7",
+            "evidence_type": "risk_assessment",
+            "content": "Control assessment documents confidentiality, integrity, availability, human oversight, and residual risk requirements.",
+            "authority": 95,
+            "current": true,
+            "signed": true
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "decision": "deny",
+        "review_queue": "security-incident",
+        "matched_rules": ["prohibit-secret-exfiltration", "high-impact-human-review"],
+        "min_accepted_evidence": 2
+      }
+    },
+    {
+      "id": "high-impact-complete-review",
+      "name": "High-impact action with complete evidence",
+      "category": "human-oversight",
+      "description": "Complete evidence does not auto-approve a high-impact action; it routes the case to accountable human review.",
+      "request": {
+        "agent_id": "benefits-decision-agent",
+        "action": "approve",
+        "resource": "benefit-eligibility-case",
+        "context": {"impact": "high", "environment": "test", "data_classification": "internal"},
+        "evidence": [
+          {
+            "evidence_id": "business-002",
+            "source_id": "case-management",
+            "source_version": "2026.7",
+            "evidence_type": "business_justification",
+            "content": "Policy requirement: the service owner documented purpose, affected users, expected benefit, and accountable ownership.",
+            "authority": 90,
+            "current": true,
+            "signed": true
+          },
+          {
+            "evidence_id": "risk-002",
+            "source_id": "risk-register",
+            "source_version": "2026.7",
+            "evidence_type": "risk_assessment",
+            "content": "Risk control assessment covers bias, human oversight, security, privacy, fallback, and monitoring requirements.",
+            "authority": 95,
+            "current": true,
+            "signed": true
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "decision": "review",
+        "review_queue": "ai-governance-board",
+        "matched_rules": ["high-impact-human-review"],
+        "min_accepted_evidence": 2
+      }
+    },
+    {
+      "id": "high-impact-missing-risk",
+      "name": "High-impact action missing risk assessment",
+      "category": "human-oversight",
+      "description": "The review response must identify the exact missing evidence type.",
+      "request": {
+        "agent_id": "benefits-decision-agent",
+        "action": "approve",
+        "resource": "benefit-eligibility-case",
+        "context": {"impact": "high", "environment": "test"},
+        "evidence": [
+          {
+            "evidence_id": "business-003",
+            "source_id": "case-management",
+            "source_version": "2026.7",
+            "evidence_type": "business_justification",
+            "content": "Policy requirement: the business owner documented purpose, scope, expected benefit, and accountable ownership.",
+            "authority": 90,
+            "current": true,
+            "signed": true
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "decision": "review",
+        "review_queue": "ai-governance-board",
+        "matched_rules": ["high-impact-human-review"],
+        "missing_evidence": ["risk_assessment"]
+      }
+    },
+    {
+      "id": "production-deploy-complete",
+      "name": "Production deployment with change controls",
+      "category": "production-change",
+      "description": "A production-changing agent must be routed to the production change queue even with complete evidence.",
+      "request": {
+        "agent_id": "deployment-agent",
+        "action": "deploy",
+        "resource": "customer-api",
+        "context": {"impact": "medium", "environment": "production", "data_classification": "internal"},
+        "evidence": [
+          {
+            "evidence_id": "change-001",
+            "source_id": "change-management",
+            "source_version": "CHG-2026-0042",
+            "evidence_type": "change_ticket",
+            "content": "Approved change control CHG-2026-0042 defines implementation, validation, owner, maintenance window, and authorization.",
+            "authority": 95,
+            "current": true,
+            "signed": true
+          },
+          {
+            "evidence_id": "rollback-001",
+            "source_id": "deployment-runbook",
+            "source_version": "2026.8",
+            "evidence_type": "rollback_plan",
+            "content": "Control runbook defines rollback triggers, database restoration, deployment reversal, validation, and responsible operators.",
+            "authority": 90,
+            "current": true,
+            "signed": true
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "decision": "review",
+        "review_queue": "production-change",
+        "matched_rules": ["production-agent-change"],
+        "min_accepted_evidence": 2
+      }
+    },
+    {
+      "id": "production-delete-missing-rollback",
+      "name": "Production deletion without rollback plan",
+      "category": "production-change",
+      "description": "Destructive production action must explicitly report the missing rollback plan.",
+      "request": {
+        "agent_id": "operations-agent",
+        "action": "delete",
+        "resource": "production-index",
+        "context": {"impact": "medium", "environment": "production"},
+        "evidence": [
+          {
+            "evidence_id": "change-002",
+            "source_id": "change-management",
+            "source_version": "CHG-2026-0055",
+            "evidence_type": "change_ticket",
+            "content": "Approved change control CHG-2026-0055 documents scope, owner, implementation window, and authorization.",
+            "authority": 95,
+            "current": true,
+            "signed": true
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "decision": "review",
+        "review_queue": "production-change",
+        "matched_rules": ["production-agent-change"],
+        "missing_evidence": ["rollback_plan"]
+      }
+    },
+    {
+      "id": "unmatched-action-failsafe",
+      "name": "Unknown action uses fail-safe review",
+      "category": "fail-safe",
+      "description": "An action outside the active policy set must never be silently allowed.",
+      "request": {
+        "agent_id": "experimental-agent",
+        "action": "translate",
+        "resource": "internal-document",
+        "context": {"impact": "medium", "environment": "test"},
+        "evidence": []
+      },
+      "expect": {
+        "status": 200,
+        "decision": "review",
+        "review_queue": "governance-default",
+        "no_matched_rules": true,
+        "reason_contains": ["No active policy rule matched"]
+      }
+    },
+    {
+      "id": "public-external-send-failsafe",
+      "name": "Unclassified external sending is reviewed",
+      "category": "fail-safe",
+      "description": "Even when data is public, an uncovered external-send action is routed to review instead of being implicitly permitted.",
+      "request": {
+        "agent_id": "communications-agent",
+        "action": "send_external",
+        "resource": "public-announcement",
+        "context": {"impact": "medium", "environment": "production", "data_classification": "public"},
+        "evidence": []
+      },
+      "expect": {
+        "status": 200,
+        "decision": "review",
+        "review_queue": "governance-default",
+        "no_matched_rules": true
+      }
+    },
+    {
+      "id": "invalid-request-validation",
+      "name": "Invalid API request is rejected",
+      "category": "api-validation",
+      "description": "The API must reject a request that omits the required agent identifier.",
+      "benchmark": false,
+      "request": {
+        "action": "summarize",
+        "context": {"impact": "low"},
+        "evidence": []
+      },
+      "expect": {"status": 422}
+    }
+  ]
+}

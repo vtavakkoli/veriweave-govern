@@ -9,6 +9,7 @@ WORKDIR /app
 
 COPY pyproject.toml README.md ./
 COPY app ./app
+COPY benchmark ./benchmark
 RUN pip install --upgrade pip && pip install .
 
 COPY config ./config

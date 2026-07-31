@@ -25,7 +25,7 @@ jobs:
       - name: Install
         run: python -m pip install -e ".[dev]"
       - name: Lint
-        run: ruff check app tests
+        run: ruff check app benchmark tests
       - name: Test
         run: pytest -q
 
@@ -33,5 +33,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build container
-        run: docker build -t veriweave-govern:ci .
+      - name: Build application and benchmark images
+        run: docker compose --profile benchmark build govern test
+
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run end-to-end governance benchmark
+        env:
+          BENCHMARK_ITERATIONS: "3"
+          BENCHMARK_CONCURRENCY: "2"
+        run: |
+          mkdir -p results
+          chmod 0777 results
+          docker compose up --build --abort-on-container-exit --exit-code-from test test
+      - name: Upload benchmark reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veriweave-govern-benchmark
+          path: results/
+          if-no-files-found: warn
+      - name: Stop benchmark services
+        if: always()
+        run: docker compose down --volumes --remove-orphans
