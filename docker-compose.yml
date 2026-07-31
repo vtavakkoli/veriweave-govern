@@ -46,9 +46,9 @@ services:
       BENCHMARK_ITERATIONS: ${BENCHMARK_ITERATIONS:-10}
       BENCHMARK_CONCURRENCY: ${BENCHMARK_CONCURRENCY:-4}
       BENCHMARK_REQUEST_TIMEOUT: ${BENCHMARK_REQUEST_TIMEOUT:-10}
+    user: "0:0"
     volumes:
-      - ./results:/results
-    read_only: true
+      - ./results:/results:rw
     tmpfs:
       - /tmp
     security_opt:
