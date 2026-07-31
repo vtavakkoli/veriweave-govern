@@ -50,14 +50,15 @@ Action proceeds only under organizational controls
 - audit-chain verification endpoint
 - interactive browser dashboard
 - hardened Docker Compose baseline
-- tests for allow, escalation, denial, and audit integrity
+- unit tests for allow, escalation, human review, denial, precedence, fail-safe behavior, and audit tampering
+- end-to-end Docker benchmark with manually defined scenarios and HTML/JSON reports
 
 ## Run with Docker
 
 ```bash
 cp .env.example .env
 # Replace the development signing key in .env
-docker compose up --build -d
+docker compose up --build -d govern
 ```
 
 Open:
@@ -72,14 +73,111 @@ Stop the service:
 docker compose down
 ```
 
+## Run the comprehensive benchmark
+
+The benchmark starts a real VeriWeave Govern container, waits for its health check, submits manually authored governance scenarios through the public API, verifies the decisions and evidence behavior, runs a concurrent latency profile, validates the signed audit chain, and writes a self-contained HTML report.
+
+### Detached Docker run
+
+```bash
+mkdir -p results
+docker compose up --build -d test
+docker compose logs -f test
+```
+
+The legacy Compose command is equivalent:
+
+```bash
+docker-compose up --build -d test
+```
+
+The benchmark container exits when the run is complete. Generated files are written to the host:
+
+```text
+results/benchmark-report.html
+results/benchmark-results.json
+```
+
+Open `results/benchmark-report.html` in any browser. The report includes:
+
+- scenario pass/fail accuracy;
+- expected and actual decisions;
+- matched policy rules and review queues;
+- missing and rejected evidence;
+- full request and response details;
+- mean, median, P95, P99, and maximum latency;
+- sequentially aggregated throughput;
+- decision distribution;
+- policy-set hash;
+- audit-chain integrity and head hash.
+
+### Foreground run with exit status
+
+For local development or CI, use the foreground target. It returns a nonzero exit code when a scenario, performance request, or audit-integrity check fails.
+
+```bash
+make benchmark
+```
+
+To use the detached workflow and wait for its result:
+
+```bash
+make benchmark-detached
+```
+
+### Configure benchmark load
+
+```bash
+BENCHMARK_ITERATIONS=25 \
+BENCHMARK_CONCURRENCY=8 \
+docker compose up --build --abort-on-container-exit --exit-code-from test test
+```
+
+Defaults are 10 iterations per benchmark scenario and concurrency 4.
+
+### Add or change scenarios
+
+Edit [`benchmark/scenarios.json`](benchmark/scenarios.json). Each scenario contains:
+
+- an identifier, name, category, and description;
+- the complete `/v1/evaluate` request;
+- expected HTTP status and governance decision;
+- optional matched-rule, review-queue, missing-evidence, evidence-score, signature, and reason assertions;
+- an optional `benchmark: false` flag for correctness-only cases such as API validation errors.
+
+The supplied catalog covers:
+
+1. low-risk allow with trusted evidence;
+2. escalation when required evidence is absent;
+3. rejection of outdated and unsigned evidence;
+4. protected-data exfiltration denial;
+5. deny-over-review precedence;
+6. high-impact human-review routing;
+7. missing risk-assessment detection;
+8. production deployment controls;
+9. missing rollback-plan detection;
+10. fail-safe handling of unknown actions;
+11. fail-safe handling of uncovered external sending;
+12. API request validation.
+
 ## Run locally
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate       # Windows: .venv\Scripts\activate
 python -m pip install -e ".[dev]"
+ruff check app benchmark tests
 pytest -q
 python -m app.main
+```
+
+Against an already running service, the benchmark can also be executed directly:
+
+```bash
+veriweave-govern-benchmark \
+  --base-url http://localhost:8080 \
+  --iterations 10 \
+  --concurrency 4
 ```
 
 ## Example evaluation
