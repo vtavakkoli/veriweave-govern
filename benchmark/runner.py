@@ -530,7 +530,7 @@ def main() -> int:
     html_path.write_text(render_html_report(report), encoding="utf-8")
 
     summary = report["summary"]
-    print("", flush=True)
+    print(flush=True)
     print("VeriWeave Govern benchmark complete", flush=True)
     print(
         f"Scenarios: {summary['passed_scenarios']}/{summary['scenario_count']} passed | "
