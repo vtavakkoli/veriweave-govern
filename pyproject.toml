@@ -27,13 +27,14 @@ dev = [
 
 [project.scripts]
 veriweave-govern = "app.main:run"
+veriweave-govern-benchmark = "benchmark.runner:main"
 
 [tool.setuptools]
 package-dir = {"" = "."}
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["app*"]
+include = ["app*", "benchmark*"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
