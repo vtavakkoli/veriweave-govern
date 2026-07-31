@@ -6,6 +6,8 @@ __pycache__/
 venv/
 .env
 data/*.jsonl
+results/*
+!results/.gitkeep
 build/
 dist/
 *.egg-info/
