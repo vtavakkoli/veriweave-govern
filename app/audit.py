@@ -4,7 +4,7 @@ import hashlib
 import hmac
 import json
 import threading
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -33,7 +33,7 @@ class AuditLedger:
     def append(self, payload: dict[str, Any]) -> AuditEnvelope:
         with self._lock:
             previous_hash = self._last_hash()
-            created_at = datetime.now(timezone.utc)
+            created_at = datetime.now(UTC)
             record_id = str(uuid4())
             body = {
                 "record_id": record_id,

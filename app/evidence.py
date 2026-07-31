@@ -44,7 +44,11 @@ class EvidenceVerifier:
             else:
                 reasons.append("content too short")
 
-            if re.search(r"\b(section|article|control|policy|requirement|clause)\b", item.content, re.I):
+            if re.search(
+                r"\b(section|article|control|policy|requirement|clause)\b",
+                item.content,
+                re.IGNORECASE,
+            ):
                 score += 0.10
                 reasons.append("contains policy reference language")
 

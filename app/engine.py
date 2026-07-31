@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Iterable
+from collections.abc import Iterable
 
 from app.audit import AuditLedger
 from app.evidence import EvidenceVerifier

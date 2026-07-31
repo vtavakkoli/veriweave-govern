@@ -3,7 +3,7 @@ from pathlib import Path
 from app.audit import AuditLedger
 from app.engine import GovernanceEngine
 from app.evidence import EvidenceVerifier
-from app.models import Decision, EvidenceItem, EvaluationRequest
+from app.models import Decision, EvaluationRequest, EvidenceItem
 from app.policy import PolicyStore
 
 
