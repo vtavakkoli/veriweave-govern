@@ -6,7 +6,6 @@ from app.evidence import EvidenceVerifier
 from app.models import Decision, EvaluationRequest, EvidenceItem
 from app.policy import PolicyStore
 
-
 POLICY_DIR = Path(__file__).resolve().parents[1] / "config" / "policies"
 
 

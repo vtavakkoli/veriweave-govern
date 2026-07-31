@@ -8,7 +8,6 @@ from app.evidence import EvidenceVerifier
 from app.models import Decision, EvaluationRequest, EvaluationResponse, RuleResult
 from app.policy import PolicyStore, rule_matches
 
-
 _DECISION_PRIORITY = {Decision.ALLOW: 0, Decision.REVIEW: 1, Decision.DENY: 2}
 
 
