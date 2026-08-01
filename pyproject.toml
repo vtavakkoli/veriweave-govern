@@ -1,16 +1,43 @@
 [build-system]
-requires = ["setuptools>=69", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "veriweave-govern"
-version = "0.1.0"
+version = "0.2.0"
 description = "Policy enforcement and evidence governance control plane for enterprise AI agents"
 readme = "README.md"
 requires-python = ">=3.11"
-license = {text = "Apache-2.0"}
-authors = [{name = "Vahid Tavakkoli"}]
-keywords = ["ai-governance", "agentic-ai", "policy-as-code", "audit", "evidence", "human-oversight"]
+license = "BUSL-1.1"
+license-files = ["LICENSE"]
+authors = [
+  {name = "Vahid Tavakkoli", email = "vahid.tavakkoli@aau.at"},
+]
+maintainers = [
+  {name = "Vahid Tavakkoli", email = "vahid.tavakkoli@aau.at"},
+]
+keywords = [
+  "ai-governance",
+  "agentic-ai",
+  "policy-as-code",
+  "evidence-governance",
+  "human-oversight",
+  "audit",
+  "compliance",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "License :: Other/Proprietary License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security",
+  "Typing :: Typed",
+]
 dependencies = [
   "fastapi>=0.116,<1",
   "uvicorn[standard]>=0.35,<1",
@@ -20,14 +47,24 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "pytest>=8.4,<10",
+  "build>=1.2,<2",
   "httpx>=0.28,<1",
+  "pytest>=8.4,<10",
   "ruff>=0.12,<1",
+  "twine>=6,<7",
 ]
 
 [project.scripts]
 veriweave-govern = "app.main:run"
 veriweave-govern-benchmark = "benchmark.runner:main"
+
+[project.urls]
+Homepage = "https://github.com/vtavakkoli/veriweave-govern"
+Documentation = "https://github.com/vtavakkoli/veriweave-govern#readme"
+Repository = "https://github.com/vtavakkoli/veriweave-govern.git"
+Issues = "https://github.com/vtavakkoli/veriweave-govern/issues"
+Changelog = "https://github.com/vtavakkoli/veriweave-govern/blob/main/CHANGELOG.md"
+"Commercial License" = "https://github.com/vtavakkoli/veriweave-govern/blob/main/COMMERCIAL-LICENSE.md"
 
 [tool.setuptools]
 package-dir = {"" = "."}
@@ -39,6 +76,7 @@ include = ["app*", "benchmark*"]
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+addopts = "-ra"
 
 [tool.ruff]
 line-length = 100
