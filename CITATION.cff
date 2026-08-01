@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use VeriWeave Govern in research, please cite this software. Production use requires a commercial license before the Change Date."
+title: "VeriWeave Govern"
+type: software
+version: 0.2.0
+date-released: 2026-08-02
+license: BUSL-1.1
+repository-code: "https://github.com/vtavakkoli/veriweave-govern"
+url: "https://github.com/vtavakkoli/veriweave-govern"
+abstract: >-
+  A deterministic policy enforcement and evidence-governance control plane for
+  enterprise AI agents, with human-review routing and tamper-evident audit.
+authors:
+  - family-names: Tavakkoli
+    given-names: Vahid
+    email: vahid.tavakkoli@aau.at
