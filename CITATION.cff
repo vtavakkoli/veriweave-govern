@@ -1,10 +1,10 @@
 cff-version: 1.2.0
-message: "If you use VeriWeave Govern in research, please cite this software. Production use requires a commercial license before the Change Date."
+message: "If you use VeriWeave Govern in research, please cite this software."
 title: "VeriWeave Govern"
 type: software
 version: 0.2.0
 date-released: 2026-08-02
-license: BUSL-1.1
+license: Apache-2.0
 repository-code: "https://github.com/vtavakkoli/veriweave-govern"
 url: "https://github.com/vtavakkoli/veriweave-govern"
 abstract: >-
