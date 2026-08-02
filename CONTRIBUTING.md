@@ -1,9 +1,11 @@
 # Contributing to VeriWeave Govern
 
-Thank you for helping improve VeriWeave Govern. This repository is a
-source-available commercial product and research integration foundation, so
-contributions must preserve deterministic behavior, auditability, and clear
-licensing.
+Thank you for helping improve VeriWeave Govern. This is an open-source
+engineering and research project, so contributions should preserve
+deterministic behavior, auditability, security, and clear documentation.
+
+Participation in this project is governed by
+[`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 
 ## Before contributing
 
@@ -14,10 +16,7 @@ licensing.
   documentation, tests, examples, and data.
 - Security vulnerabilities must follow [`SECURITY.md`](SECURITY.md), not the
   public issue tracker.
-
-External code contributions require prior maintainer approval and may require
-a separate contributor agreement before merge. This protects the project's
-ability to provide both source-available and commercial licensing.
+- Check existing issues and pull requests to avoid duplicating active work.
 
 ## Development setup
 
@@ -69,10 +68,9 @@ Use concise imperative commit messages. Pull-request descriptions should cover:
 
 ## Licensing of contributions
 
-Unless a separate written agreement states otherwise, contributions accepted
-into a BUSL-licensed release are distributed under the same Business Source
-License parameters that apply to that release and later under its Change
-License. Do not submit code copied from an incompatible license.
+Unless you explicitly state otherwise, any contribution intentionally submitted
+for inclusion in this project is licensed under the Apache License 2.0, in
+accordance with Section 5 of [`LICENSE`](LICENSE).
 
-Opening an issue or pull request does not grant production or commercial-use
-rights beyond those provided by [`LICENSE`](LICENSE).
+Do not submit code or content copied from an incompatible license. Retain
+required attribution and third-party notices when applicable.
