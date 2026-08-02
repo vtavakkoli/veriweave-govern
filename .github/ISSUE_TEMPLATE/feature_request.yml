@@ -1,0 +1,45 @@
+name: Feature request
+description: Propose a focused improvement to VeriWeave Govern
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: Describe the concrete governance or operational problem.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Explain the expected behavior and user impact.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Governance impact
+      options:
+        - No policy-decision impact
+        - Changes policy evaluation
+        - Changes evidence validation
+        - Changes audit behavior
+        - Changes human-review routing
+        - Unsure
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmation
+      options:
+        - label: I searched for an existing issue or roadmap item.
+          required: true
+        - label: The request does not include confidential or restricted material.
+          required: true

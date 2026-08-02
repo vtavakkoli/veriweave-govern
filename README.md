@@ -1,63 +1,91 @@
+<div align="center">
+
 # VeriWeave Govern
 
-**VeriWeave Govern** is a local-first policy enforcement and evidence-governance control plane for enterprise AI agents.
+**Deterministic policy enforcement, evidence validation, human-review routing, and tamper-evident audit for enterprise AI agents.**
 
-It turns approved organizational policies into deterministic runtime decisions and records:
+[![CI](https://github.com/vtavakkoli/veriweave-govern/actions/workflows/ci.yml/badge.svg)](https://github.com/vtavakkoli/veriweave-govern/actions/workflows/ci.yml)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
+[![Docker](https://img.shields.io/badge/docker-compose-2496ED.svg?logo=docker&logoColor=white)](docker-compose.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
+[![Status: MVP](https://img.shields.io/badge/status-product--quality%20MVP-7c3aed.svg)](#project-status)
 
-- what an agent attempted;
-- which policy version matched;
-- what evidence was supplied;
-- whether that evidence met the required trust threshold;
-- why the action was allowed, denied, or routed to human review;
-- which review queue owns the decision;
-- the tamper-evident audit record created for the evaluation.
+[Quick start](#quick-start) · [Architecture](docs/ARCHITECTURE.md) · [Benchmark](#benchmark) · [Security](SECURITY.md) · [Roadmap](ROADMAP.md) · [License](#license)
 
-The product direction combines **Policy-as-Skill** governance concepts with the provenance and verification methods developed in **VeriWeave-VITA-PRO**.
+</div>
 
-> **Status:** product-quality MVP and integration foundation. It is not a legal-compliance certification, autonomous legal decision-maker, or complete production security boundary by itself.
+> [!NOTE]
+> VeriWeave Govern is open-source software under the Apache License 2.0.
+> It is an engineering and research MVP, not a legal-compliance certification
+> or a complete production authorization boundary.
 
-## Why it is different
+## Overview
 
-Many AI-governance products primarily document systems after deployment. VeriWeave Govern is designed to sit directly in the execution path of an AI agent or automated workflow.
+VeriWeave Govern is a local-first governance control plane designed to sit in
+the execution path of an AI agent, automated workflow, API gateway, or tool
+router. It evaluates an intended action against approved organizational
+policies, validates the evidence required to justify that action, and returns a
+deterministic `allow`, `review`, or `deny` decision.
+
+Every decision records:
+
+- the attempted action and relevant context;
+- the active policy set and matched rule versions;
+- supplied, accepted, rejected, and missing evidence;
+- deterministic precedence and decision reasons;
+- the accountable human-review queue, when required;
+- a hash-chained audit envelope suitable for later verification.
+
+The product direction combines **Policy-as-Skill** governance concepts with
+provenance and verification methods developed in **VeriWeave-VITA-PRO**.
+
+## Why VeriWeave Govern
+
+Many governance tools primarily document systems after deployment. VeriWeave
+Govern is intended to enforce policy **before an agent action proceeds**.
 
 ```text
-Agent requests an action
-          |
-          v
-VeriWeave Govern
-  - match active policy rules
-  - validate required evidence
-  - enforce deny / review / allow
-  - route accountable human review
-  - append a tamper-evident audit record
-          |
-          v
-Action proceeds only under organizational controls
+Agent / workflow / API gateway
+              |
+              v
+      VeriWeave Govern API
+      - match active rules
+      - validate evidence
+      - apply deny > review > allow
+      - identify accountable reviewer
+      - append audit record
+              |
+       +------+------+
+       |      |      |
+     allow  review  deny
 ```
 
-## MVP capabilities
+The decision path is deterministic and does not require an LLM. LLMs or
+retrieval systems may provide candidate evidence, but policy enforcement and
+evidence gates remain explicit and testable.
 
-- FastAPI governance service with OpenAPI documentation
-- YAML policy bundles with versions, owners, status, tags, and rules
-- safe predicate DSL without Python `eval`
-- deterministic precedence: `deny > review > allow`
-- fail-safe review when no policy rule matches
-- evidence-quality scoring and required-evidence gates
-- explicit human-review queues
-- policy-content and policy-set hashes
-- append-only SHA-256 audit chain
-- optional HMAC audit signatures
-- audit-chain verification endpoint
-- interactive browser dashboard
-- hardened Docker Compose baseline
-- unit tests for allow, escalation, human review, denial, precedence, fail-safe behavior, and audit tampering
-- end-to-end Docker benchmark with manually defined scenarios and HTML/JSON reports
+## Core capabilities
 
-## Run with Docker
+| Area | Capability |
+|---|---|
+| Policy | Versioned YAML policy bundles with owners, lifecycle status, tags, and rules |
+| Evaluation | Safe predicate DSL without Python `eval` |
+| Precedence | Deterministic `deny > review > allow` reduction |
+| Fail-safe behavior | Unmatched actions are routed to review rather than silently allowed |
+| Evidence | Required-evidence gates, quality scoring, freshness, signatures, and authority checks |
+| Human oversight | Explicit review queues carried in policy and decision responses |
+| Integrity | Policy-content hashes, policy-set hashes, and append-only SHA-256 audit chaining |
+| Verification | Optional HMAC audit signatures and audit-chain verification endpoint |
+| Operations | FastAPI, OpenAPI, browser dashboard, health endpoint, Docker Compose, and CI |
+| Evaluation | Unit tests plus an end-to-end benchmark with HTML and JSON reports |
+
+## Quick start
+
+### Docker Compose
 
 ```bash
 cp .env.example .env
-# Replace the development signing key in .env
+# Replace every development secret before use.
 docker compose up --build -d govern
 ```
 
@@ -70,122 +98,27 @@ Open:
 Stop the service:
 
 ```bash
-docker compose down
+docker compose down --volumes --remove-orphans
 ```
 
-## Run the comprehensive benchmark
-
-The benchmark starts a real VeriWeave Govern container, waits for its health check, submits manually authored governance scenarios through the public API, verifies the decisions and evidence behavior, runs a concurrent latency profile, validates the signed audit chain, and writes a self-contained HTML report.
-
-### Detached Docker run
-
-```bash
-mkdir -p results
-docker compose up --build -d test
-docker compose logs -f test
-```
-
-The legacy Compose command is equivalent:
-
-```bash
-docker-compose up --build -d test
-```
-
-The benchmark container exits when the run is complete. Generated files are written to the host:
-
-```text
-results/benchmark-report.html
-results/benchmark-results.json
-```
-
-Open `results/benchmark-report.html` in any browser. The report includes:
-
-- scenario pass/fail accuracy;
-- expected and actual decisions;
-- matched policy rules and review queues;
-- missing and rejected evidence;
-- full request and response details;
-- mean, median, P95, P99, and maximum latency;
-- sequentially aggregated throughput;
-- decision distribution;
-- policy-set hash;
-- audit-chain integrity and head hash.
-
-### Foreground run with exit status
-
-For local development or CI, use the foreground target. It returns a nonzero exit code when a scenario, performance request, or audit-integrity check fails.
-
-```bash
-make benchmark
-```
-
-To use the detached workflow and wait for its result:
-
-```bash
-make benchmark-detached
-```
-
-### Configure benchmark load
-
-```bash
-BENCHMARK_ITERATIONS=25 \
-BENCHMARK_CONCURRENCY=8 \
-docker compose up --build --abort-on-container-exit --exit-code-from test test
-```
-
-Defaults are 10 iterations per benchmark scenario and concurrency 4.
-
-### Add or change scenarios
-
-Edit [`benchmark/scenarios.json`](benchmark/scenarios.json). Each scenario contains:
-
-- an identifier, name, category, and description;
-- the complete `/v1/evaluate` request;
-- expected HTTP status and governance decision;
-- optional matched-rule, review-queue, missing-evidence, evidence-score, signature, and reason assertions;
-- an optional `benchmark: false` flag for correctness-only cases such as API validation errors.
-
-The supplied catalog covers:
-
-1. low-risk allow with trusted evidence;
-2. escalation when required evidence is absent;
-3. rejection of outdated and unsigned evidence;
-4. protected-data exfiltration denial;
-5. deny-over-review precedence;
-6. high-impact human-review routing;
-7. missing risk-assessment detection;
-8. production deployment controls;
-9. missing rollback-plan detection;
-10. fail-safe handling of unknown actions;
-11. fail-safe handling of uncovered external sending;
-12. API request validation.
-
-## Run locally
+### Local development
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate       # Windows: .venv\Scripts\activate
+source .venv/bin/activate       # Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 ruff check app benchmark tests
 pytest -q
 python -m app.main
 ```
 
-Against an already running service, the benchmark can also be executed directly:
-
-```bash
-veriweave-govern-benchmark \
-  --base-url http://localhost:8080 \
-  --iterations 10 \
-  --concurrency 4
-```
-
 ## Example evaluation
 
 ```bash
-curl -X POST http://localhost:8080/v1/evaluate \
-  -H "Content-Type: application/json" \
-  -d '{
+curl --request POST http://localhost:8080/v1/evaluate \
+  --header 'Content-Type: application/json' \
+  --data '{
     "agent_id": "procurement-agent",
     "action": "summarize",
     "context": {
@@ -206,9 +139,10 @@ curl -X POST http://localhost:8080/v1/evaluate \
   }'
 ```
 
-A response contains the final decision, matched policy rules, evidence assessments, active policy-set hash, review queue, and audit envelope.
+The response includes the final decision, matched rules, evidence assessments,
+policy-set hash, review queue, reasons, and audit envelope.
 
-## API
+## API surface
 
 | Method | Endpoint | Purpose |
 |---|---|---|
@@ -216,7 +150,7 @@ A response contains the final decision, matched policy rules, evidence assessmen
 | `GET` | `/v1/policies` | Active policy metadata and hashes |
 | `POST` | `/v1/policies/reload` | Reload active policy bundles |
 | `POST` | `/v1/evaluate` | Evaluate an agent action |
-| `GET` | `/v1/audit` | Recent audit records and chain integrity |
+| `GET` | `/v1/audit` | Read recent audit records and integrity status |
 | `GET` | `/v1/audit/verify` | Verify the complete audit chain |
 
 ## Policy example
@@ -242,19 +176,103 @@ rules:
     reason: High-impact AI actions require documented evidence and human oversight.
 ```
 
-Supported operators are `exists`, `eq`, `neq`, `in`, `not_in`, `contains`, `starts_with`, `gte`, `lte`, and `truthy`.
+Supported operators are `exists`, `eq`, `neq`, `in`, `not_in`, `contains`,
+`starts_with`, `gte`, `lte`, and `truthy`.
 
-## Product roadmap
+## Benchmark
 
-The next milestone should add:
+The benchmark starts a real service container, waits for readiness, submits
+manually authored governance scenarios through the public API, validates the
+expected decisions and evidence behavior, profiles concurrent latency, checks
+the signed audit chain, and writes self-contained reports.
 
-1. OIDC and workload identity
-2. PostgreSQL and schema migrations
-3. tenant isolation and role-based administration
-4. signed policy bundles and approval workflows
-5. ServiceNow, Jira, BMC Helix, SharePoint, and Confluence connectors
-6. direct VeriWeave PRO evidence certificates
-7. OpenTelemetry and SIEM export
-8. external audit anchoring and key rotation
+```bash
+make benchmark
+```
 
-See [Architecture](docs/ARCHITECTURE.md) for the system boundary and production-hardening roadmap.
+Generated artifacts:
+
+```text
+results/benchmark-report.html
+results/benchmark-results.json
+```
+
+A detached workflow is also available:
+
+```bash
+make benchmark-detached
+```
+
+Configure benchmark load with environment variables:
+
+```bash
+BENCHMARK_ITERATIONS=25 \
+BENCHMARK_CONCURRENCY=8 \
+docker compose up --build --abort-on-container-exit --exit-code-from test test
+```
+
+The supplied scenarios cover trusted evidence, missing evidence, outdated or
+unsigned evidence, protected-data exfiltration, deny-over-review precedence,
+high-impact review, production controls, rollback evidence, fail-safe handling,
+and API validation.
+
+## Repository structure
+
+```text
+veriweave-govern/
+├── app/                  FastAPI service and governance engine
+├── benchmark/            End-to-end benchmark runner and scenarios
+├── config/policies/      Example policy bundles
+├── docs/                 Architecture and operational documentation
+├── tests/                Deterministic unit tests
+├── results/              Generated benchmark artifacts
+├── Dockerfile
+├── docker-compose.yml
+└── pyproject.toml
+```
+
+## Security and production boundary
+
+This repository is an integration foundation, not a complete production
+security boundary or legal-compliance certification. Before production use,
+add identity, authorization, durable storage, tenant isolation, secret
+management, rate limiting, observability, backup, key rotation, policy approval
+workflows, and independent security review.
+
+See [`SECURITY.md`](SECURITY.md) for vulnerability reporting and
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the current system boundary.
+
+## Roadmap
+
+The production roadmap includes OIDC and workload identity, PostgreSQL and
+migrations, tenant isolation, signed policy bundles, four-eyes approval,
+enterprise review-system connectors, VeriWeave evidence certificates,
+OpenTelemetry and SIEM export, key rotation, and external audit anchoring.
+
+See [`ROADMAP.md`](ROADMAP.md) for milestones and exit criteria.
+
+## Project status
+
+**Version 0.2.0 is a product-quality MVP and integration foundation.** It is
+appropriate for evaluation, demonstrations, controlled pilots, research, and
+integration development. It is not yet presented as a certified compliance
+product, autonomous legal decision-maker, or production authorization boundary.
+
+## Contributing and support
+
+Read [`CONTRIBUTING.md`](CONTRIBUTING.md) and
+[`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) before proposing changes. Use
+[`SUPPORT.md`](SUPPORT.md) for support channels and scope. Security issues must
+follow the private process in [`SECURITY.md`](SECURITY.md).
+
+## Citation
+
+Citation metadata is provided in [`CITATION.cff`](CITATION.cff). GitHub can
+generate BibTeX and other formats from the repository's **Cite this repository**
+control.
+
+## License
+
+Licensed under the **Apache License 2.0**. You may use, modify, and distribute
+this software subject to the terms in [`LICENSE`](LICENSE). Attribution notices
+are provided in [`NOTICE`](NOTICE).

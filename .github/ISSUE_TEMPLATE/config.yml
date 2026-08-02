@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/vtavakkoli/veriweave-govern/security/policy
+    about: Report security issues privately according to SECURITY.md.
+  - name: Support guidance
+    url: https://github.com/vtavakkoli/veriweave-govern/blob/main/SUPPORT.md
+    about: Review supported channels and scope before opening an issue.
