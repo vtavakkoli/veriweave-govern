@@ -7,17 +7,17 @@
 [![CI](https://github.com/vtavakkoli/veriweave-govern/actions/workflows/ci.yml/badge.svg)](https://github.com/vtavakkoli/veriweave-govern/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![Docker](https://img.shields.io/badge/docker-compose-2496ED.svg?logo=docker&logoColor=white)](docker-compose.yml)
-[![License: BUSL-1.1](https://img.shields.io/badge/license-BUSL--1.1-orange.svg)](LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
 [![Status: MVP](https://img.shields.io/badge/status-product--quality%20MVP-7c3aed.svg)](#project-status)
 
-[Quick start](#quick-start) · [Architecture](docs/ARCHITECTURE.md) · [Benchmark](#benchmark) · [Security](SECURITY.md) · [Commercial licensing](COMMERCIAL-LICENSE.md)
+[Quick start](#quick-start) · [Architecture](docs/ARCHITECTURE.md) · [Benchmark](#benchmark) · [Security](SECURITY.md) · [Roadmap](ROADMAP.md) · [License](#license)
 
 </div>
 
-> [!IMPORTANT]
-> VeriWeave Govern is a source-available product under the Business Source
-> License 1.1. Non-production use is permitted under [`LICENSE`](LICENSE).
-> Production use before the Change Date requires a commercial license.
+> [!NOTE]
+> VeriWeave Govern is open-source software under the Apache License 2.0.
+> It is an engineering and research MVP, not a legal-compliance certification
+> or a complete production authorization boundary.
 
 ## Overview
 
@@ -260,19 +260,19 @@ product, autonomous legal decision-maker, or production authorization boundary.
 
 ## Contributing and support
 
-Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before proposing code changes. Use
+Read [`CONTRIBUTING.md`](CONTRIBUTING.md) and
+[`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) before proposing changes. Use
 [`SUPPORT.md`](SUPPORT.md) for support channels and scope. Security issues must
 follow the private process in [`SECURITY.md`](SECURITY.md).
 
+## Citation
+
+Citation metadata is provided in [`CITATION.cff`](CITATION.cff). GitHub can
+generate BibTeX and other formats from the repository's **Cite this repository**
+control.
+
 ## License
 
-VeriWeave Govern 0.2.0 is licensed under the **Business Source License 1.1**
-(`BUSL-1.1`). The license permits non-production use and changes to the Apache
-License 2.0 on **2 August 2030**, subject to the controlling terms in
-[`LICENSE`](LICENSE).
-
-Production use before that date requires a separate commercial license. See
-[`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md).
-
-The Business Source License is source-available and is **not an Open Source
-license before the Change Date**.
+Licensed under the **Apache License 2.0**. You may use, modify, and distribute
+this software subject to the terms in [`LICENSE`](LICENSE). Attribution notices
+are provided in [`NOTICE`](NOTICE).
