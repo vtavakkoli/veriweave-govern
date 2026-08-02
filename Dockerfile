@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.title="VeriWeave Govern" \
       org.opencontainers.image.description="Policy enforcement and evidence governance control plane for enterprise AI agents" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.source="https://github.com/vtavakkoli/veriweave-govern" \
-      org.opencontainers.image.licenses="BUSL-1.1"
+      org.opencontainers.image.licenses="Apache-2.0"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -15,7 +15,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN useradd --create-home --uid 10001 govern
 WORKDIR /app
 
-COPY pyproject.toml README.md LICENSE COMMERCIAL-LICENSE.md ./
+COPY pyproject.toml README.md LICENSE NOTICE ./
 COPY app ./app
 COPY benchmark ./benchmark
 RUN python -m pip install --upgrade pip && python -m pip install .
