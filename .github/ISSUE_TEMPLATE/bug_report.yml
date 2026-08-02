@@ -1,0 +1,71 @@
+name: Bug report
+description: Report a reproducible defect in VeriWeave Govern
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a defect. Do not include secrets, personal data,
+        customer data, or vulnerability details. Security issues must follow
+        SECURITY.md.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: "0.2.0 or commit SHA"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Policy evaluation
+        - Evidence validation
+        - Audit ledger
+        - API or dashboard
+        - Benchmark
+        - Docker or deployment
+        - Packaging or CI
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the observed and expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Provide a minimal reproducible example with sensitive data removed.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "OS, Python, Docker, deployment mode, relevant configuration"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmation
+      options:
+        - label: I searched for an existing issue.
+          required: true
+        - label: I removed secrets and sensitive data.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true
