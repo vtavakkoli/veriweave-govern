@@ -18,12 +18,15 @@ architecture review, production incident response, or compliance advice.
 Suspected vulnerabilities must be reported privately according to
 [`SECURITY.md`](SECURITY.md).
 
-## Commercial support
+## Professional support
 
-Commercial support may include production deployment guidance, prioritized
+Professional services may include production deployment guidance, prioritized
 maintenance, integration design, policy-model review, private fixes, and agreed
-response targets. See [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md) or
-contact `vahid.tavakkoli@aau.at`.
+response targets. Contact `vahid.tavakkoli@aau.at` with a short description of
+the intended deployment and support needs.
+
+Professional services are separate from the Apache License 2.0 rights granted
+for the software.
 
 ## Scope limitations
 
