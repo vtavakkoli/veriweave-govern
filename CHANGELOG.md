@@ -18,21 +18,23 @@ release numbering.
 
 ### Changed
 
-- changed the source distribution license to Business Source License 1.1;
-- defined an Apache License 2.0 Change License effective 2030-08-02;
-- added commercial-licensing guidance for production deployments;
-- upgraded package metadata to the current SPDX-based license expression;
+- standardized the repository, package metadata, and container metadata under
+  the Apache License 2.0;
+- added canonical `LICENSE` and `NOTICE` files;
+- upgraded package metadata to the current SPDX-based license expression and
+  removed the deprecated license classifier that caused PEP 639 build failures;
 - professionalized the README, security policy, contribution process, support
-  policy, roadmap, citation metadata, and pull-request workflow;
+  policy, roadmap, citation metadata, issue forms, and pull-request workflow;
 - added OCI image metadata and ensured license files are included in images and
   Python distributions;
-- added package-build validation to CI.
+- expanded CI to Python 3.13, package validation, and Node 24-native GitHub
+  Actions.
 
-### Notes
+### Fixed
 
-The license change applies to version 0.2.0 as identified in `LICENSE`.
-Separately distributed earlier versions remain governed by the terms that
-accompanied those versions.
+- corrected the package configuration so editable installs, source
+  distributions, wheels, containers, and benchmarks can proceed past license
+  metadata validation.
 
 ## [0.1.0] - 2026-07-31
 
