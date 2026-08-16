@@ -1,0 +1,12 @@
+framework: "NIST AI Risk Management Framework 1.0"
+status: "voluntary-framework crosswalk"
+source: "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/"
+mappings:
+  - reference: "GOVERN"
+    veriweave_capabilities: ["policy lifecycle", "accountability metadata", "standards crosswalks", "review ownership"]
+  - reference: "MAP"
+    veriweave_capabilities: ["action/context inventory", "data classification", "purpose capture", "risk scenarios"]
+  - reference: "MEASURE"
+    veriweave_capabilities: ["GovernBench", "false-allow rate", "GASR", "calibration metrics", "95% confidence intervals"]
+  - reference: "MANAGE"
+    veriweave_capabilities: ["runtime allow-review-deny enforcement", "human escalation", "counterfactual remediation", "temporal replay"]

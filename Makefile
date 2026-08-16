@@ -1,4 +1,4 @@
-.PHONY: install test lint run docker-up docker-down benchmark benchmark-detached benchmark-clean
+.PHONY: install test lint run docker-up docker-down benchmark benchmark-detached benchmark-clean research research-quick research-docker
 
 install:
 	python -m pip install -e ".[dev]"
@@ -7,7 +7,7 @@ test:
 	pytest -q
 
 lint:
-	ruff check app benchmark tests
+	ruff check app benchmark research consulting tests
 
 run:
 	python -m app.main
@@ -28,3 +28,13 @@ benchmark-detached:
 benchmark-clean:
 	docker compose rm -sf test
 	rm -f results/benchmark-report.html results/benchmark-results.json
+
+research:
+	python -m research.experiments --seeds 30 --cases 2000 --output results/research-v1
+
+research-quick:
+	python -m research.experiments --seeds 3 --cases 300 --output results/research-quick
+
+research-docker:
+	mkdir -p results
+	docker compose --profile research run --rm research

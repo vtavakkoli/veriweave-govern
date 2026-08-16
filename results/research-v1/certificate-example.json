@@ -1,0 +1,11 @@
+{
+  "case_id": "gb-000-00000",
+  "counterfactuals": [{"decision": "review", "operation": "remove:gb-000-00000-ev-0"}, {"decision": "deny", "operation": "set:external+secret"}],
+  "decision": "allow",
+  "integrity_note": "Runtime deployments should bind this certificate to the production audit-chain hash.",
+  "minimal_support": ["gb-000-00000-ev-0"],
+  "missing_evidence": [],
+  "policy_version": 1,
+  "reasons": [],
+  "schema": "veriweave-governance-certificate/v1"
+}

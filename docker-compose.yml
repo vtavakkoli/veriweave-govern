@@ -1,7 +1,7 @@
 services:
   govern:
     build: .
-    image: veriweave-govern:0.1.0
+    image: veriweave-govern:0.3.0
     ports:
       - "8080:8080"
     environment:
@@ -11,18 +11,11 @@ services:
       - govern-data:/app/data
       - ./config/policies:/app/config/policies:ro
     read_only: true
-    tmpfs:
-      - /tmp
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
     healthcheck:
-      test:
-        - CMD
-        - python
-        - -c
-        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')"]
       interval: 3s
       timeout: 3s
       retries: 20
@@ -30,12 +23,11 @@ services:
     restart: unless-stopped
 
   test:
-    profiles:
-      - benchmark
+    profiles: [benchmark]
     build:
       context: .
       dockerfile: benchmark/Dockerfile
-    image: veriweave-govern-benchmark:0.1.0
+    image: veriweave-govern-benchmark:0.3.0
     depends_on:
       govern:
         condition: service_healthy
@@ -47,14 +39,31 @@ services:
       BENCHMARK_CONCURRENCY: ${BENCHMARK_CONCURRENCY:-4}
       BENCHMARK_REQUEST_TIMEOUT: ${BENCHMARK_REQUEST_TIMEOUT:-10}
     user: "0:0"
-    volumes:
-      - ./results:/results:rw
-    tmpfs:
-      - /tmp
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
+    volumes: ["./results:/results:rw"]
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    restart: "no"
+
+  research:
+    profiles: [research]
+    build: .
+    image: veriweave-govern:0.3.0
+    command:
+      - python
+      - -m
+      - research.experiments
+      - --seeds
+      - ${GOVERNBENCH_SEEDS:-30}
+      - --cases
+      - ${GOVERNBENCH_CASES:-2000}
+      - --output
+      - /app/results/research-v1
+    user: "0:0"
+    volumes: ["./results:/app/results:rw"]
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
     restart: "no"
 
 volumes:

@@ -1,0 +1,12 @@
+framework: "ISO/IEC 42001:2023"
+status: "high-level public-information crosswalk; licensed standard text not reproduced"
+source: "https://www.iso.org/standard/42001.html"
+public_objectives:
+  - topic: "AI management system establishment and continual improvement"
+    veriweave_capabilities: ["versioned policy bundles", "benchmark evidence", "operational review artifacts"]
+  - topic: "AI risk and opportunity management"
+    veriweave_capabilities: ["risk evidence", "review routing", "adversarial testing", "readiness assessment"]
+  - topic: "traceability and transparency"
+    veriweave_capabilities: ["audit chain", "decision reasons", "governance certificate", "temporal replay"]
+  - topic: "responsible AI governance"
+    veriweave_capabilities: ["human oversight", "fail-safe review", "deterministic authorization separated from LLM assistance"]

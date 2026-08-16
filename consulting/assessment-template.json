@@ -1,0 +1,16 @@
+{
+  "organization": "Example Organization",
+  "assessment_date": "YYYY-MM-DD",
+  "scope": "Example AI/agent portfolio",
+  "scores": {
+    "policy_coverage": 0,
+    "evidence_quality": 0,
+    "human_oversight": 0,
+    "auditability": 0,
+    "security": 0,
+    "resilience": 0,
+    "operational_readiness": 0
+  },
+  "evidence": [],
+  "notes": "Scores must be backed by documented assessment evidence. VGRI is not certification."
+}
