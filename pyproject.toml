@@ -4,30 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "veriweave-govern"
-version = "0.2.0"
-description = "Policy enforcement and evidence governance control plane for enterprise AI agents"
+version = "0.3.0"
+description = "Deterministic policy enforcement, evidence governance, and scientific benchmarking for enterprise AI agents"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
-authors = [
-  {name = "Vahid Tavakkoli", email = "vahid.tavakkoli@aau.at"},
-]
-maintainers = [
-  {name = "Vahid Tavakkoli", email = "vahid.tavakkoli@aau.at"},
-]
-keywords = [
-  "ai-governance",
-  "agentic-ai",
-  "policy-as-code",
-  "evidence-governance",
-  "human-oversight",
-  "audit",
-  "compliance",
-]
+authors = [{name = "Vahid Tavakkoli", email = "vahid.tavakkoli@aau.at"}]
+maintainers = [{name = "Vahid Tavakkoli", email = "vahid.tavakkoli@aau.at"}]
+keywords = ["ai-governance", "agentic-ai", "policy-as-code", "evidence-governance", "human-oversight", "audit", "compliance", "benchmark"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
   "Intended Audience :: Information Technology",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
@@ -55,6 +44,9 @@ dev = [
 [project.scripts]
 veriweave-govern = "app.main:run"
 veriweave-govern-benchmark = "benchmark.runner:main"
+veriweave-govern-research = "research.experiments:main"
+veriweave-govern-human-eval = "research.human_eval:main"
+veriweave-vgri = "consulting.readiness:main"
 
 [project.urls]
 Homepage = "https://github.com/vtavakkoli/veriweave-govern"
@@ -65,13 +57,14 @@ Changelog = "https://github.com/vtavakkoli/veriweave-govern/blob/main/CHANGELOG.
 Security = "https://github.com/vtavakkoli/veriweave-govern/security/policy"
 Support = "https://github.com/vtavakkoli/veriweave-govern/blob/main/SUPPORT.md"
 Roadmap = "https://github.com/vtavakkoli/veriweave-govern/blob/main/ROADMAP.md"
+Research = "https://github.com/vtavakkoli/veriweave-govern/blob/main/RESEARCH.md"
 
 [tool.setuptools]
 package-dir = {"" = "."}
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["app*", "benchmark*"]
+include = ["app*", "benchmark*", "research*", "consulting*"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

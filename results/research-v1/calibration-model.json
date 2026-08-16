@@ -1,0 +1,6 @@
+{
+  "bias": -2.316535000471946,
+  "feature_names": ["authority", "current", "signed", "substantive_content", "policy_reference_language", "contradiction"],
+  "threshold": 0.75,
+  "weights": [0.9075451410403622, 0.9861301147524488, 0.6348649773702366, 1.1262953141321306, 0.27004222931927885, -0.49322099752653753]
+}

@@ -1,0 +1,19 @@
+framework: "Regulation (EU) 2024/1689 (EU AI Act)"
+status: "technical crosswalk; not legal advice or certification"
+source: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+mappings:
+  - reference: "Article 9"
+    topic: "Risk management system"
+    veriweave_capabilities: ["versioned policies", "risk evidence requirement", "review routing", "temporal replay"]
+  - reference: "Article 12"
+    topic: "Record-keeping"
+    veriweave_capabilities: ["tamper-evident audit chain", "decision trace", "policy-set hash", "governance certificate"]
+  - reference: "Article 13"
+    topic: "Transparency and information to deployers"
+    veriweave_capabilities: ["explicit reasons", "matched rules", "missing-evidence explanation"]
+  - reference: "Article 14"
+    topic: "Human oversight"
+    veriweave_capabilities: ["allow-review-deny model", "accountable review queue", "high-impact review gate"]
+  - reference: "Article 15"
+    topic: "Accuracy, robustness and cybersecurity"
+    veriweave_capabilities: ["adversarial benchmark", "fail-safe OOD handling", "audit integrity", "GASR metric"]

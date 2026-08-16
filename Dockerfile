@@ -1,9 +1,9 @@
 FROM python:3.12-slim AS runtime
 
-ARG VERSION=0.2.0
+ARG VERSION=0.3.0
 
 LABEL org.opencontainers.image.title="VeriWeave Govern" \
-      org.opencontainers.image.description="Policy enforcement and evidence governance control plane for enterprise AI agents" \
+      org.opencontainers.image.description="Deterministic policy enforcement, evidence governance, and scientific benchmarking for enterprise AI agents" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.source="https://github.com/vtavakkoli/veriweave-govern" \
       org.opencontainers.image.licenses="Apache-2.0"
@@ -18,10 +18,13 @@ WORKDIR /app
 COPY pyproject.toml README.md LICENSE NOTICE ./
 COPY app ./app
 COPY benchmark ./benchmark
+COPY research ./research
+COPY consulting ./consulting
 RUN python -m pip install --upgrade pip && python -m pip install .
 
 COPY config ./config
-RUN mkdir -p /app/data && chown -R govern:govern /app
+COPY standards ./standards
+RUN mkdir -p /app/data /app/results && chown -R govern:govern /app
 USER govern
 
 EXPOSE 8080

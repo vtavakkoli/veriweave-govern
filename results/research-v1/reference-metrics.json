@@ -1,0 +1,20 @@
+{
+  "configuration": {"cases_per_seed": 2000, "seeds": 30, "synthetic": true},
+  "scientific_boundary": "Synthetic oracle-labelled reference run; not human-validated real-world effectiveness.",
+  "baselines": {
+    "rbac": {"accuracy": {"mean": 0.586417, "ci95_low": 0.5845, "ci95_high": 0.588292}, "macro_f1": {"mean": 0.601217}, "false_allow_rate": {"mean": 0.303208}, "gasr": {"mean": 0.714232}},
+    "abac": {"accuracy": {"mean": 0.494667, "ci95_low": 0.494458, "ci95_high": 0.494833}, "macro_f1": {"mean": 0.5468}, "false_allow_rate": {"mean": 0.505333}, "gasr": {"mean": 0.856929}},
+    "llm-proxy": {"accuracy": {"mean": 0.557125, "ci95_low": 0.555167, "ci95_high": 0.559083}, "macro_f1": {"mean": 0.238522}, "false_allow_rate": {"mean": 0.0}, "false_review_rate": {"mean": 0.1475}, "gasr": {"mean": 0.0}, "note": "deterministic proxy; not an actual LLM result"},
+    "veriweave": {"accuracy": {"mean": 0.98875, "ci95_low": 0.987625, "ci95_high": 0.989875}, "macro_f1": {"mean": 0.983616}, "false_allow_rate": {"mean": 0.0}, "false_review_rate": {"mean": 0.01125}, "gasr": {"mean": 0.0}}
+  },
+  "calibration": {"auroc": {"mean": 0.983649}, "auprc": {"mean": 0.989698}, "brier": {"mean": 0.122488}, "ece": {"mean": 0.220387}, "threshold": {"mean": 0.755667}},
+  "ablations": {
+    "evidence-gate": {"accuracy": 0.712667, "false_allow_rate": 0.287333, "gasr": 0.571536},
+    "contradiction-check": {"accuracy": 0.988, "false_allow_rate": 0.00075, "gasr": 0.006742},
+    "human-review": {"accuracy": 0.899792, "false_allow_rate": 0.088958},
+    "fail-safe-ood": {"accuracy": 0.860375, "false_allow_rate": 0.128375, "gasr": 0.142697},
+    "deny-precedence": {"accuracy": 0.7675, "false_allow_rate": 0.211458},
+    "temporal-replay": {"accuracy": 0.915458, "false_allow_rate": 0.066542}
+  },
+  "temporal_accuracy": {"mean": 1.0, "ci95_low": 1.0, "ci95_high": 1.0}
+}

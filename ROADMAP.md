@@ -1,62 +1,68 @@
-# Product roadmap
+# Product and research roadmap
 
-This roadmap communicates intended direction, not a binding delivery
-commitment. Priorities may change based on security findings, user feedback,
-and validated deployment requirements.
+This roadmap communicates direction, not a binding delivery commitment.
 
-## Milestone 1 — Hardened single-tenant pilot
+## Delivered in v0.3 — Scientific governance benchmark foundation
+
+- GovernBench synthetic multi-domain generator and adversarial families
+- 30-seed evaluation with confidence intervals and safety metrics
+- learned evidence calibration
+- baseline/ablation framework
+- counterfactual governance certificates and temporal replay
+- human-evaluation protocol
+- standards crosswalks and consulting readiness tooling
+
+**Boundary:** the committed benchmark is synthetic/oracle-labelled. External validity remains an explicit next milestone.
+
+## Milestone 1 — Real-world scientific validation
+
+- independently annotated sanitized governance cases
+- 10–20 practitioner human study, with inter-rater agreement
+- human-only vs human+VeriWeave evaluation
+- pinned official OPA and Cedar engine runs
+- real organizational policy/evidence case studies where approvals permit
+- dataset/version cards, provenance, train/test isolation and reproducibility bundle
+
+**Exit criteria:** core effectiveness claims are supported by independently reviewed non-synthetic cases and reproducible baseline runs.
+
+## Milestone 2 — Hardened single-tenant pilot
 
 - OIDC authentication and workload identity
-- PostgreSQL persistence and schema migrations
+- PostgreSQL persistence and migrations
 - role-based administration
-- idempotency, quotas, and rate limits
-- structured logs, metrics, and OpenTelemetry traces
-- secret-manager integration and key rotation
-- backup, restore, retention, and operational runbooks
+- quotas/rate limits and idempotency
+- structured logs, metrics and OpenTelemetry traces
+- secret-manager integration/key rotation
+- backup, restore, retention and operational runbooks
 
-**Exit criteria:** a controlled pilot can operate without development secrets,
-in-memory-only state, or anonymous administrative endpoints.
-
-## Milestone 2 — Governed policy lifecycle
+## Milestone 3 — Governed policy lifecycle
 
 - signed policy bundles and trusted publisher keys
-- draft, review, approve, activate, deprecate, and revoke states
+- draft/review/approve/activate/deprecate/revoke states
 - four-eyes approval and separation of duties
-- policy diff, validation, rollback, and effective-date controls
-- immutable approval evidence linked to each active policy set
+- policy diff, validation, rollback and effective dates
+- immutable approval evidence linked to active policy sets
 
-**Exit criteria:** every production policy change has accountable approval,
-verifiable provenance, and safe rollback.
+## Milestone 4 — Enterprise integrations
 
-## Milestone 3 — Enterprise integrations
-
-- ServiceNow, Jira, and BMC Helix review queues
-- SharePoint, Confluence, and Git policy synchronization
+- ServiceNow/Jira/BMC review queues
+- SharePoint/Confluence/Git policy synchronization
 - SIEM and immutable-object-storage audit export
-- API-gateway, agent-platform, and semantic-router adapters
-- webhooks and asynchronous review completion
+- API-gateway, agent-platform and semantic-router adapters
+- asynchronous review completion
 
-**Exit criteria:** governance decisions and review ownership integrate with
-existing enterprise systems without manual copying.
-
-## Milestone 4 — Multi-tenant platform
+## Milestone 5 — Multi-tenant platform
 
 - tenant isolation and tenant-scoped encryption
-- organization, project, environment, and policy namespaces
+- organization/project/environment namespaces
 - delegated administration and fine-grained authorization
-- usage metering, operational limits, and audit export boundaries
-- migration and disaster-recovery procedures
+- usage metering, migration and disaster recovery
 
-**Exit criteria:** independent tenants can be operated with tested data,
-identity, policy, and audit isolation.
-
-## Milestone 5 — VeriWeave evidence certification
+## Milestone 6 — Evidence certification research
 
 - provenance-robust evidence selection
-- counterfactual omitted-evidence checks
-- temporal policy replay and supersession detection
-- claim-level support and contradiction certificates
-- human-validated evaluation corpora and calibrated thresholds
-
-**Exit criteria:** evidence certificates are reproducible, machine-readable,
-and evaluated against independently reviewed cases.
+- counterfactual omitted-evidence checks integrated with runtime audit
+- temporal supersession detection
+- claim-level support/contradiction certificates
+- calibrated thresholds validated on human-labelled corpora
+- formal/differential policy analysis with external verification engines

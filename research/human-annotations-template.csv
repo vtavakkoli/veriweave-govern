@@ -1,0 +1,2 @@
+case_id,annotator_id,condition,decision,duration_seconds,confidence,explanation_usefulness,notes
+case-001,annotator-001,human-only,review,45.2,4,,

@@ -8,6 +8,8 @@ venv/
 data/*.jsonl
 results/*
 !results/.gitkeep
+!results/research-v1/
+!results/research-v1/**
 build/
 dist/
 *.egg-info/
