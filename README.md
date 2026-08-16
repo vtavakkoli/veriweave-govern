@@ -1,6 +1,6 @@
 <div align="center">
 
-# VeriWeave Govern
+# VeriWeave Govern 
 
 **Deterministic runtime governance, calibrated evidence validation, human-review routing, tamper-evident audit, and reproducible scientific evaluation for enterprise AI agents.**
 
