@@ -58,7 +58,7 @@ jobs:
           test -s results/research-smoke/report.json
           test -s results/research-smoke/report.html
           test -s results/research-smoke/baseline-runs.csv
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: governbench-research-smoke
           path: results/research-smoke/
@@ -112,7 +112,7 @@ jobs:
           docker compose up --build --abort-on-container-exit --exit-code-from test test
       - name: Upload benchmark reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: veriweave-govern-benchmark
           path: results/
