@@ -44,6 +44,8 @@ veriweave-govern = "app.main:run"
 veriweave-govern-benchmark = "benchmark.runner:main"
 veriweave-govern-research = "research.experiments:main"
 veriweave-govern-publication = "research.regulatory_validation:main"
+veriweave-govern-legal-audit = "research.legal_audit:main"
+veriweave-govern-publication-statistics = "research.publication_statistics:main"
 veriweave-govern-human-eval = "research.human_eval:main"
 veriweave-vgri = "consulting.readiness:main"
 
