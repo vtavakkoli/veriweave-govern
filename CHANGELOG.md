@@ -4,6 +4,14 @@ All notable changes to VeriWeave Govern are documented here. The project follows
 
 ## [Unreleased]
 
+### Changed
+
+- narrowed the supported runtime and CI target to Python 3.13 only, including package metadata and Docker images.
+
+### Fixed
+
+- replaced deprecated `typing.Iterable` imports in the research calibration and metrics modules with `collections.abc.Iterable` so Ruff passes on Python 3.13.
+
 ### Planned
 
 - independent human-labelled real-world governance corpus
