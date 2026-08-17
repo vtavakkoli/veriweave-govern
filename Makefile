@@ -1,4 +1,4 @@
-.PHONY: install test lint run docker-up docker-down benchmark benchmark-detached benchmark-clean research research-quick research-docker publication publication-load publication-suite publication-local publication-clean
+.PHONY: install test lint run docker-up docker-down benchmark benchmark-detached benchmark-clean research research-quick research-docker publication publication-verify publication-load publication-suite publication-local publication-clean
 
 install:
 	python -m pip install -e ".[dev]"
@@ -39,6 +39,9 @@ research-docker:
 	mkdir -p results
 	docker compose --profile research run --rm research
 
+publication-verify:
+	python -m research.legal_audit --output results/publication/legal-audit.json
+
 publication:
 	mkdir -p results
 	docker compose --profile publication up --build --abort-on-container-exit --exit-code-from publication publication
@@ -49,7 +52,7 @@ publication-load:
 
 publication-suite: benchmark publication publication-load
 
-publication-local:
+publication-local: publication-verify
 	python -m research.regulatory_validation --output results/publication
 	python -m research.reliability_report --report results/publication/report.json --output results/publication/calibration-reliability.svg
 
