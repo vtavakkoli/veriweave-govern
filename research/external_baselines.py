@@ -216,7 +216,7 @@ def ollama_decision(
         "OLLAMA_BASE_URL",
         "http://host.docker.internal:11434",
     ).rstrip("/")
-    model = os.getenv("OLLAMA_MODEL", "gemma3n:e2b")
+    model = os.getenv("OLLAMA_MODEL", "gemma4:e2b")
     facts = {
         "action": case.action,
         "resource": case.resource,
