@@ -1,6 +1,6 @@
 FROM rust:bookworm AS cedar-builder
 
-RUN cargo install cedar-policy-cli --version 4.11.0 --locked
+RUN cargo install cedar-policy-cli --version 4.12.0 --locked
 
 FROM python:3.13-slim AS publication
 
