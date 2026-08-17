@@ -73,7 +73,7 @@ services:
     restart: "no"
 
   opa:
-    profiles: [publication]
+    profiles: [publication, pipeline]
     image: openpolicyagent/opa:1.17.0
     command:
       - run
@@ -137,6 +137,46 @@ services:
       LOAD_MATRIX_CONCURRENCIES: ${LOAD_MATRIX_CONCURRENCIES:-1,4,16,32}
     user: "0:0"
     volumes: ["./results:/results:rw"]
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    restart: "no"
+
+  pipeline:
+    profiles: [pipeline]
+    build:
+      context: .
+      dockerfile: research/Dockerfile.publication
+    image: veriweave-govern-publication:0.4.0
+    entrypoint: ["python", "-m", "research.full_pipeline"]
+    depends_on:
+      govern:
+        condition: service_healthy
+      opa:
+        condition: service_started
+    environment:
+      PIPELINE_RESULTS_DIR: /app/results
+      GOVERNBENCH_SEEDS: ${GOVERNBENCH_SEEDS:-30}
+      GOVERNBENCH_CASES: ${GOVERNBENCH_CASES:-2000}
+      BENCHMARK_BASE_URL: http://govern:8080
+      BENCHMARK_SCENARIOS: /app/benchmark/scenarios.json
+      BENCHMARK_RESULTS_DIR: /app/results
+      BENCHMARK_ITERATIONS: ${BENCHMARK_ITERATIONS:-10}
+      BENCHMARK_CONCURRENCY: ${BENCHMARK_CONCURRENCY:-4}
+      BENCHMARK_REQUEST_TIMEOUT: ${BENCHMARK_REQUEST_TIMEOUT:-10}
+      OPA_URL: http://opa:8181
+      CEDAR_BIN: cedar
+      CEDAR_POLICY_DIR: research/policy_baselines/cedar
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4:e2b}
+      PUBLICATION_BOOTSTRAP_SAMPLES: ${PUBLICATION_BOOTSTRAP_SAMPLES:-10000}
+      PUBLICATION_BOOTSTRAP_SEED: ${PUBLICATION_BOOTSTRAP_SEED:-20260817}
+      LOAD_MATRIX_REQUESTS_PER_LEVEL: ${LOAD_MATRIX_REQUESTS_PER_LEVEL:-10000}
+      LOAD_MATRIX_CONCURRENCIES: ${LOAD_MATRIX_CONCURRENCIES:-1,4,16,32}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    user: "0:0"
+    volumes: ["./results:/app/results:rw"]
     tmpfs: [/tmp]
     security_opt: [no-new-privileges:true]
     cap_drop: [ALL]

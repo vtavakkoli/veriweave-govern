@@ -90,7 +90,7 @@ def preflight() -> dict[str, object]:
         "opa_url": opa_url,
         "ollama_base_url": ollama_url,
         "ollama_model": ollama_model,
-        "ollama_available_models": sorted(available),
+        "model_pull_performed": False,
     }
 
 
@@ -257,7 +257,11 @@ def _write_summary(
         "preflight": preflight_info,
         "stages": [asdict(stage) for stage in stages],
         "artifacts": [
-            {"path": str(item), "exists": item.is_file(), "size": item.stat().st_size if item.is_file() else 0}
+            {
+                "path": str(item),
+                "exists": item.is_file(),
+                "size": item.stat().st_size if item.is_file() else 0,
+            }
             for item in artifacts
         ],
     }
@@ -284,7 +288,13 @@ def main() -> int:
             except subprocess.CalledProcessError as exc:
                 duration = time.perf_counter() - started
                 stage_results.append(
-                    StageResult(name, "failed", duration, command, f"exit code {exc.returncode}")
+                    StageResult(
+                        name,
+                        "failed",
+                        duration,
+                        command,
+                        f"exit code {exc.returncode}",
+                    )
                 )
                 raise
             duration = time.perf_counter() - started
