@@ -5,7 +5,7 @@ The publication profile adds three independent comparator paths to the 150-case 
 | Baseline | Pinned/default component | Role |
 |---|---|---|
 | OPA/Rego | Open Policy Agent 1.17.0 | General-purpose policy-as-code comparison |
-| Cedar | `cedar-policy-cli` 4.11.0 | Authorization-policy comparison |
+| Cedar | `cedar-policy-cli` 4.12.0 | Authorization-policy comparison |
 | Ollama | `gemma3n:e2b` | Actual local edge-LLM decision baseline |
 
 The OPA and Cedar policies deliberately use the same small structured fact set: prohibition status, protected external disclosure, impact, unknown-action state, and evidence completeness. They are not presented as full replicas of VeriWeave's evidence calibration or human-review model.
