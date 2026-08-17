@@ -20,6 +20,9 @@ decision?
   engines.
 - **H6 Human complementarity:** human + VeriWeave is the target operating
   model; this project does not claim to replace accountable human governance.
+- **H7 External validity:** performance on the regulation-grounded EU/Austria
+  set remains strong when final evaluation uses independently annotated and
+  adjudicated labels rather than generator/oracle labels.
 
 ## GovernBench synthetic experiment
 
@@ -43,14 +46,27 @@ The built-in deterministic language-style proxy is **not an actual LLM result**.
 
 The publication benchmark is separate from synthetic training and contains 150
 curated cases across three domains. Its official-source registry is snapshot
-versioned and records legal applicability dates so current and future-effective
-Austrian requirements are not silently mixed.
+versioned at **2026-08-17** and records legal applicability dates so current and
+future-effective requirements are not silently mixed.
+
+The source snapshot incorporates Regulation (EU) 2026/1744. Consequently,
+Article 6(2)/Annex III Chapter III Sections 1–3 cases are evaluated only after
+the amended **2 December 2027** application date and are explicitly marked as
+future-effective at the 2026-08-17 snapshot. The source registry also reflects
+the amended Article 4 AI-literacy wording. Current GDPR and Austrian-law cases
+remain separate from those temporal AI Act scenarios.
+
+Before evaluation, `research.legal_audit` checks the case partitions, label
+balance, unique IDs, primary-law source provenance, source verification and
+application dates, and each case's temporal consistency. The publication run
+fails closed on a hard audit error.
 
 The case bank is stored as six reviewable 25-case CSV partitions. It contains
 provisional researcher hypotheses. Two blind annotators receive worksheets that
-omit provisional labels/rationales and system predictions. Report Cohen's kappa
-before adjudication. Publish final performance against this set only after all
-150 adjudicated labels are complete.
+omit provisional labels/rationales, prohibition metadata and system predictions.
+Report final Cohen's kappa before adjudication only after both independent
+worksheets are complete. Publish final performance against this set only after
+all 150 adjudicated labels are complete.
 
 The publication profile executes:
 
@@ -59,12 +75,34 @@ The publication profile executes:
 - VeriWeave with a calibrator trained on a separate synthetic seed;
 - OPA/Rego 1.17.0;
 - Cedar 4.12.0;
-- an actual Ollama model, default `gemma3n:e2b`.
+- an actual Ollama model, default `gemma4:e2b`.
 
 OPA and Cedar are deliberately coarse structured-policy baselines; their exact
 policies are versioned under `research/policy_baselines/`. The LLM receives case
-facts and official-source summaries, but never provisional labels or VeriWeave
-predictions.
+facts and official-source summaries, but never provisional/adjudicated labels,
+provisional rationales, prohibition metadata or VeriWeave predictions.
+
+## Publication statistical analysis
+
+`research.publication_statistics` reads the frozen row-level predictions and
+produces:
+
+- case-level bootstrap 95% confidence intervals for accuracy, macro-F1 and
+  false-allow rate;
+- paired bootstrap 95% confidence intervals for the accuracy difference between
+  VeriWeave and each comparator;
+- exact two-sided McNemar tests on paired correctness outcomes;
+- Holm-Bonferroni adjusted p-values across baseline comparisons;
+- per-domain metrics.
+
+The default is **10,000 bootstrap resamples** with fixed seed `20260817`. This
+resampling is intentionally deterministic for artifact reproducibility.
+
+When adjudicated labels are incomplete, these statistics are automatically
+marked `provisional-regulation-grounded` and are development diagnostics only.
+The final paper should use the `human-adjudicated` statistics generated after
+all 150 adjudications exist. Report effect sizes/confidence intervals together
+with p-values rather than relying on significance alone.
 
 ## Calibration interpretation
 
@@ -86,11 +124,21 @@ Increase `LOAD_MATRIX_REQUESTS_PER_LEVEL` to 25,000 for an approximately
 
 ## Reproduction
 
+Prepare the real local Ollama comparator:
+
+```bash
+ollama pull gemma4:e2b
+ollama list
+```
+
+Run the complete artifact:
+
 ```bash
 make research
 make publication-suite
 ```
 
 Capture the Git commit, Docker image versions, OPA/Cedar versions, Ollama
-version/model digest, raw reports, load-matrix artifacts and completed
-annotation/adjudication files for the paper artifact.
+version/model digest, hardware, raw reports, `legal-audit.json`, publication
+statistics, load-matrix artifacts and completed annotation/adjudication files
+for the paper artifact.
