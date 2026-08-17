@@ -1,4 +1,4 @@
-.PHONY: install test lint run docker-up docker-down benchmark benchmark-detached benchmark-clean research research-quick research-docker publication publication-verify publication-statistics publication-load publication-suite publication-local publication-clean
+.PHONY: install test lint run docker-up docker-down benchmark benchmark-detached benchmark-clean research research-quick research-docker publication publication-verify publication-statistics publication-load publication-suite publication-local publication-clean pipeline pipeline-clean
 
 install:
 	python -m pip install -e ".[dev]"
@@ -63,3 +63,10 @@ publication-local: publication-verify
 publication-clean:
 	docker compose --profile publication down --volumes --remove-orphans
 	rm -rf results/publication results/load-matrix.json results/load-matrix.html
+
+pipeline:
+	mkdir -p results
+	docker compose --profile pipeline up --build --abort-on-container-exit --exit-code-from pipeline pipeline
+
+pipeline-clean:
+	docker compose --profile pipeline down --volumes --remove-orphans
