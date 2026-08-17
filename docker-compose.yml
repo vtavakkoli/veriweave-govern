@@ -118,5 +118,29 @@ services:
     cap_drop: [ALL]
     restart: "no"
 
+  load-matrix:
+    profiles: [publication]
+    build:
+      context: .
+      dockerfile: benchmark/Dockerfile
+    image: veriweave-govern-benchmark:0.4.0
+    entrypoint: ["python", "-m", "benchmark.load_matrix"]
+    depends_on:
+      govern:
+        condition: service_healthy
+    environment:
+      BENCHMARK_BASE_URL: http://govern:8080
+      BENCHMARK_SCENARIOS: /workspace/benchmark/scenarios.json
+      BENCHMARK_RESULTS_DIR: /results
+      BENCHMARK_REQUEST_TIMEOUT: ${BENCHMARK_REQUEST_TIMEOUT:-10}
+      LOAD_MATRIX_REQUESTS_PER_LEVEL: ${LOAD_MATRIX_REQUESTS_PER_LEVEL:-10000}
+      LOAD_MATRIX_CONCURRENCIES: ${LOAD_MATRIX_CONCURRENCIES:-1,4,16,32}
+    user: "0:0"
+    volumes: ["./results:/results:rw"]
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    restart: "no"
+
 volumes:
   govern-data:
