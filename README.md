@@ -62,6 +62,7 @@ the final runtime decision.
 | Explainability | Matched rules, missing evidence, reasons, legal-source provenance and counterfactuals |
 | Research | GovernBench, 30-seed evaluation, 95% CIs, GASR, calibration, ablations and temporal replay |
 | Publication | 150 EU/Austria cases, blind annotation, OPA, Cedar and real local Ollama baseline |
+| Performance | Real Docker API load matrix across multiple concurrency levels |
 | Consulting | Evidence-backed readiness workflow and VeriWeave Governance Readiness Index (VGRI) |
 
 ## Quick start
@@ -88,7 +89,7 @@ make test
 ## Runtime API
 
 | Method | Endpoint | Purpose |
-|---|---|---|
+|---|---|
 | `GET` | `/health` | Service and policy health |
 | `GET` | `/v1/policies` | Active policy metadata and hashes |
 | `POST` | `/v1/policies/reload` | Reload active bundles |
@@ -157,7 +158,7 @@ The external publication comparators are:
 | RBAC | deterministic reference baseline |
 | ABAC | deterministic reference baseline |
 | OPA/Rego | real OPA 1.17.0 engine |
-| Cedar | real `cedar-policy-cli` 4.11.0 |
+| Cedar | real `cedar-policy-cli` 4.12.0 |
 | Local LLM | real Ollama structured-output call, default `gemma3n:e2b` |
 | VeriWeave | deterministic governor with separately trained evidence calibrator |
 
@@ -168,7 +169,7 @@ ollama pull gemma3n:e2b
 ollama list
 ```
 
-Then run the complete publication profile:
+Then run the publication profile:
 
 ```bash
 docker compose --profile publication up --build \
@@ -179,22 +180,46 @@ The Docker runner reaches host Ollama through
 `http://host.docker.internal:11434`. Override `OLLAMA_BASE_URL` or
 `OLLAMA_MODEL` if needed.
 
-Results are written to:
+For the complete paper artifact, run the synthetic study plus the full Docker
+publication suite:
+
+```bash
+make research
+make publication-suite
+```
+
+`publication-suite` runs the end-to-end benchmark, the OPA/Cedar/Ollama
+regulation-grounded comparison, and a real API load matrix. The load matrix
+defaults to at least 10,000 requests at each concurrency level `1,4,16,32`
+(at least 40,000 requests total). For an approximately 100,000-request run:
+
+```bash
+LOAD_MATRIX_REQUESTS_PER_LEVEL=25000 make publication-load
+```
+
+Publication results are written to:
 
 ```text
 results/publication/
 ├── report.html
 ├── report.json
+├── calibration-reliability.svg
 ├── predictions.csv
 ├── external-details.jsonl
 ├── annotator-a.csv
 ├── annotator-b.csv
 └── adjudication.csv
+
+results/
+├── benchmark-report.html
+├── benchmark-results.json
+├── load-matrix.html
+└── load-matrix.json
 ```
 
-Until the two annotation sheets and adjudication are complete, the report is
-visibly marked **DRAFT — HUMAN VALIDATION REQUIRED**. The repository does not
-invent human-study results.
+Until the two annotation sheets and adjudication are complete, the publication
+report is visibly marked **DRAFT — HUMAN VALIDATION REQUIRED**. The repository
+does not invent human-study results.
 
 See [`research/validation/README.md`](research/validation/README.md) and
 [`research/policy_baselines/README.md`](research/policy_baselines/README.md).
@@ -212,9 +237,10 @@ contribute to safety.
 ## Evidence calibration
 
 The evidence model exposes a trust score used by a thresholded acceptance gate.
-Research reports Brier score, Expected Calibration Error, AUROC/AUPRC and
-reliability bins. The score should not be presented as a perfectly calibrated
-real-world probability without separate empirical calibration evidence.
+Research reports Brier score, Expected Calibration Error, AUROC/AUPRC,
+reliability bins and a generated SVG reliability diagram. The score should not
+be presented as a perfectly calibrated real-world probability without separate
+empirical calibration evidence.
 
 ## Counterfactual governance certificates
 
@@ -255,7 +281,7 @@ python -m consulting.readiness consulting/assessment-template.json
 
 ```text
 app/                         production FastAPI service and governance engine
-benchmark/                   end-to-end service benchmark
+benchmark/                   end-to-end service and load-matrix benchmarks
 research/                    GovernBench and publication research code
 research/validation/         EU/Austria cases and official-source registry
 research/policy_baselines/   OPA and Cedar publication policies
