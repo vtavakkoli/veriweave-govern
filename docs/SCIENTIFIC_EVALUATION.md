@@ -58,7 +58,7 @@ The publication profile executes:
 - ABAC;
 - VeriWeave with a calibrator trained on a separate synthetic seed;
 - OPA/Rego 1.17.0;
-- Cedar 4.11.0;
+- Cedar 4.12.0;
 - an actual Ollama model, default `gemma3n:e2b`.
 
 OPA and Cedar are deliberately coarse structured-policy baselines; their exact
@@ -69,17 +69,28 @@ predictions.
 ## Calibration interpretation
 
 The evidence model exposes a score that is used for thresholded trust
-acceptance. The repository reports Brier score, ECE, AUROC/AUPRC and reliability
-bins. Do not describe the score as a perfectly calibrated real-world
-probability without separate empirical calibration data.
+acceptance. The repository reports Brier score, ECE, AUROC/AUPRC, reliability
+bins and a publication-ready SVG reliability diagram. Do not describe the score
+as a perfectly calibrated real-world probability without separate empirical
+calibration data.
+
+## Service-level performance
+
+The engineering smoke benchmark is complemented by a Docker service load matrix.
+By default it executes at least 10,000 requests per concurrency level for
+concurrency 1, 4, 16 and 32, producing at least 40,000 real API requests. This is
+reported separately from GovernBench's in-process scalability profile.
+
+Increase `LOAD_MATRIX_REQUESTS_PER_LEVEL` to 25,000 for an approximately
+100,000-request publication run.
 
 ## Reproduction
 
 ```bash
 make research
-make publication
+make publication-suite
 ```
 
 Capture the Git commit, Docker image versions, OPA/Cedar versions, Ollama
-version/model digest, raw reports and completed annotation/adjudication files for
-the paper artifact.
+version/model digest, raw reports, load-matrix artifacts and completed
+annotation/adjudication files for the paper artifact.
