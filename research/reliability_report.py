@@ -45,7 +45,7 @@ def render_svg(curve: list[dict[str, float | int]]) -> str:
         confidence = float(row["mean_confidence"])
         accuracy = float(row["empirical_accuracy"])
         count = int(row["count"])
-        radius = min(14.0, 4.0 + count ** 0.5 / 2.0)
+        radius = min(14.0, 4.0 + count**0.5 / 2.0)
         title = html.escape(
             f"confidence={confidence:.3f}, empirical={accuracy:.3f}, n={count}"
         )
@@ -54,6 +54,8 @@ def render_svg(curve: list[dict[str, float | int]]) -> str:
             f'r="{radius:.1f}" class="point"><title>{title}</title></circle>'
         )
 
+    mean_score_x = left + plot / 2
+    mean_score_y = top + plot + 55
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}"
 viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">
 <title id="title">Evidence reliability diagram</title>
@@ -71,7 +73,7 @@ text{{font-family:system-ui,sans-serif;fill:#172033}}.grid{{stroke:#d9dfeb;strok
 <line x1="{x(0):.1f}" y1="{y(0):.1f}" x2="{x(1):.1f}" y2="{y(1):.1f}" class="ideal"/>
 {''.join(points)}
 {''.join(labels)}
-<text x="{left + plot / 2}" y="{top + plot + 55}" class="label" text-anchor="middle">Mean trust score</text>
+<text x="{mean_score_x}" y="{mean_score_y}" class="label" text-anchor="middle">Mean trust score</text>
 <text x="18" y="{top + plot / 2}" class="label" text-anchor="middle"
 transform="rotate(-90 18 {top + plot / 2})">Empirical evidence validity</text>
 <text x="{left + plot + 35}" y="{top + 40}" class="tick">Dashed: ideal calibration</text>
