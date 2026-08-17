@@ -1,4 +1,4 @@
-.PHONY: install test lint run docker-up docker-down benchmark benchmark-detached benchmark-clean research research-quick research-docker publication publication-local publication-clean
+.PHONY: install test lint run docker-up docker-down benchmark benchmark-detached benchmark-clean research research-quick research-docker publication publication-load publication-suite publication-local publication-clean
 
 install:
 	python -m pip install -e ".[dev]"
@@ -43,9 +43,15 @@ publication:
 	mkdir -p results
 	docker compose --profile publication up --build --abort-on-container-exit --exit-code-from publication publication
 
+publication-load:
+	mkdir -p results
+	docker compose --profile publication up --build --abort-on-container-exit --exit-code-from load-matrix load-matrix
+
+publication-suite: benchmark publication publication-load
+
 publication-local:
 	python -m research.regulatory_validation --output results/publication
 
 publication-clean:
 	docker compose --profile publication down --volumes --remove-orphans
-	rm -rf results/publication
+	rm -rf results/publication results/load-matrix.json results/load-matrix.html
