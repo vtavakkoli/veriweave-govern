@@ -61,7 +61,8 @@ the final runtime decision.
 | Integrity | Policy hashes, append-only SHA-256 audit chaining, optional HMAC signatures |
 | Explainability | Matched rules, missing evidence, reasons, legal-source provenance and counterfactuals |
 | Research | GovernBench, 30-seed evaluation, 95% CIs, GASR, calibration, ablations and temporal replay |
-| Publication | 150 EU/Austria cases, blind annotation, OPA, Cedar and real local Ollama baseline |
+| Publication | 150 EU/Austria regulation-grounded cases, blind annotation, OPA, Cedar and real local Ollama baseline |
+| Legal reproducibility | Primary-law source registry, snapshot date, application dates and automated temporal audit |
 | Performance | Real Docker API load matrix across multiple concurrency levels |
 | Consulting | Evidence-backed readiness workflow and VeriWeave Governance Readiness Index (VGRI) |
 
@@ -89,7 +90,7 @@ make test
 ## Runtime API
 
 | Method | Endpoint | Purpose |
-|---|---|
+|---|---|---|
 | `GET` | `/health` | Service and policy health |
 | `GET` | `/v1/policies` | Active policy metadata and hashes |
 | `POST` | `/v1/policies/reload` | Reload active bundles |
@@ -134,16 +135,31 @@ compliance effectiveness.
 ### 3. Publication validation
 
 The publication layer is deliberately separate from GovernBench. It contains
-**150 regulation-grounded candidate cases**:
+**150 regulation-grounded, realistic candidate cases**:
 
 - 50 public-administration actions;
 - 50 enterprise IT / DevOps actions;
 - 50 data-handling / AI-governance actions.
 
-The source registry is snapshot-versioned and links each case to official EU
-and Austrian legal sources. The set includes current-law cases and separately
-marked future-effective Austrian NISG 2026 readiness cases. The six 25-case CSV
-partitions are intentionally small enough for manual review.
+The source registry is snapshot-versioned and links every case to official
+EU or Austrian primary-law sources. The set includes current-law cases and
+separately marked future-effective temporal cases. The six 25-case CSV
+partitions are intentionally small enough for manual legal/domain review.
+
+> [!IMPORTANT]
+> The **2026 Digital Omnibus amendment matters for the paper**. Regulation (EU)
+> 2026/1744 amended the AI Act application schedule. In this benchmark,
+> Article 6(2)/Annex III high-risk Chapter III Sections 1–3 cases use an
+> evaluation date after **2 December 2027** and are marked
+> `enacted_future_effective_at_snapshot`; they are not represented as already
+> applicable on the 2026-08-17 source snapshot. The source registry also uses
+> the amended Article 4 AI-literacy wording.
+
+Before any model comparison, the publication container runs
+`research.legal_audit`. The audit checks case counts, balanced provisional
+labels, unique IDs, official-source hosts, source verification dates, source
+application dates and temporal consistency. A failing legal-source audit stops
+the publication run.
 
 The first publication run generates two blind annotation worksheets under
 `results/publication/`; they omit provisional labels, provisional rationales,
@@ -159,13 +175,13 @@ The external publication comparators are:
 | ABAC | deterministic reference baseline |
 | OPA/Rego | real OPA 1.17.0 engine |
 | Cedar | real `cedar-policy-cli` 4.12.0 |
-| Local LLM | real Ollama structured-output call, default `gemma3n:e2b` |
+| Local LLM | real Ollama structured-output call, default `gemma4:e2b` |
 | VeriWeave | deterministic governor with separately trained evidence calibrator |
 
 Prepare the local edge model:
 
 ```bash
-ollama pull gemma3n:e2b
+ollama pull gemma4:e2b
 ollama list
 ```
 
@@ -201,6 +217,7 @@ Publication results are written to:
 
 ```text
 results/publication/
+├── legal-audit.json
 ├── report.html
 ├── report.json
 ├── calibration-reliability.svg
@@ -219,7 +236,8 @@ results/
 
 Until the two annotation sheets and adjudication are complete, the publication
 report is visibly marked **DRAFT — HUMAN VALIDATION REQUIRED**. The repository
-does not invent human-study results.
+does not invent human-study results or silently substitute researcher labels
+for independent human ground truth.
 
 See [`research/validation/README.md`](research/validation/README.md) and
 [`research/policy_baselines/README.md`](research/policy_baselines/README.md).
@@ -261,7 +279,8 @@ actual annotations are supplied.
 [`standards/`](standards/) contains technical crosswalks for selected public
 concepts from the EU AI Act, NIST AI RMF and high-level ISO/IEC 42001
 objectives. `research/validation/regulatory_sources.json` adds a publication
-snapshot of official EU/Austrian sources used by the 150-case validation set.
+snapshot of official EU/Austrian primary sources used by the 150-case validation
+set, including Regulation (EU) 2026/1744 and Austrian current/future NISG rules.
 
 These mappings support research, evidence navigation and assessment work; they
 do not create automatic legal conformity or certification.
@@ -306,7 +325,7 @@ and independent security review. See [`SECURITY.md`](SECURITY.md) and
 
 **v0.4.0 is the publication-validation edition.** It is suitable for research,
 demonstrations, controlled pilots, benchmark development, consulting
-assessments and integration work. Real-world regulatory effectiveness claims
+assessments and integration work. Real-world regulatory-effectiveness claims
 still require completed independent annotation, adjudication and
 organization-specific validation.
 
