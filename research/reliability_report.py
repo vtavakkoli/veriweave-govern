@@ -21,7 +21,7 @@ def render_svg(curve: list[dict[str, float | int]]) -> str:
 
     grid = []
     labels = []
-    for step in range(0, 11):
+    for step in range(11):
         value = step / 10
         grid.append(
             f'<line x1="{x(value):.1f}" y1="{top}" x2="{x(value):.1f}" '
