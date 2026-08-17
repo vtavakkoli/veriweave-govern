@@ -1,7 +1,7 @@
 services:
   govern:
     build: .
-    image: veriweave-govern:0.3.0
+    image: veriweave-govern:0.4.0
     ports:
       - "8080:8080"
     environment:
@@ -15,7 +15,13 @@ services:
     security_opt: [no-new-privileges:true]
     cap_drop: [ALL]
     healthcheck:
-      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')"]
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import urllib.request;
+          urllib.request.urlopen('http://127.0.0.1:8080/health')
       interval: 3s
       timeout: 3s
       retries: 20
@@ -27,7 +33,7 @@ services:
     build:
       context: .
       dockerfile: benchmark/Dockerfile
-    image: veriweave-govern-benchmark:0.3.0
+    image: veriweave-govern-benchmark:0.4.0
     depends_on:
       govern:
         condition: service_healthy
@@ -48,7 +54,7 @@ services:
   research:
     profiles: [research]
     build: .
-    image: veriweave-govern:0.3.0
+    image: veriweave-govern:0.4.0
     command:
       - python
       - -m
@@ -59,6 +65,52 @@ services:
       - ${GOVERNBENCH_CASES:-2000}
       - --output
       - /app/results/research-v1
+    user: "0:0"
+    volumes: ["./results:/app/results:rw"]
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    restart: "no"
+
+  opa:
+    profiles: [publication]
+    image: openpolicyagent/opa:1.17.0
+    command:
+      - run
+      - --server
+      - --addr=0.0.0.0:8181
+      - /policies
+    volumes:
+      - ./research/policy_baselines/opa:/policies:ro
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    restart: "no"
+
+  publication:
+    profiles: [publication]
+    build:
+      context: .
+      dockerfile: research/Dockerfile.publication
+    image: veriweave-govern-publication:0.4.0
+    depends_on:
+      - opa
+    environment:
+      OPA_URL: http://opa:8181
+      CEDAR_BIN: cedar
+      CEDAR_POLICY_DIR: research/policy_baselines/cedar
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma3n:e2b}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command:
+      - --opa
+      - --cedar
+      - --ollama
+      - --require-external
+      - --output
+      - /app/results/publication
     user: "0:0"
     volumes: ["./results:/app/results:rw"]
     tmpfs: [/tmp]
