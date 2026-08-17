@@ -51,6 +51,7 @@ publication-suite: benchmark publication publication-load
 
 publication-local:
 	python -m research.regulatory_validation --output results/publication
+	python -m research.reliability_report --report results/publication/report.json --output results/publication/calibration-reliability.svg
 
 publication-clean:
 	docker compose --profile publication down --volumes --remove-orphans
