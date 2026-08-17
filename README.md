@@ -5,7 +5,7 @@
 **Deterministic runtime governance, calibrated evidence validation, human-review routing, tamper-evident audit, and reproducible scientific evaluation for enterprise AI agents.**
 
 [![CI](https://github.com/vtavakkoli/veriweave-govern/actions/workflows/ci.yml/badge.svg)](https://github.com/vtavakkoli/veriweave-govern/actions/workflows/ci.yml)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
+[![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
 [![Research](https://img.shields.io/badge/GovernBench-30%20seeds-purple.svg)](RESEARCH.md)
 
@@ -63,7 +63,7 @@ docker compose up --build -d govern
 
 Open the dashboard at `http://localhost:8080`, OpenAPI at `http://localhost:8080/docs`, and health at `http://localhost:8080/health`.
 
-Local development:
+Local development and package installation require **Python 3.13**.
 
 ```bash
 python -m venv .venv
