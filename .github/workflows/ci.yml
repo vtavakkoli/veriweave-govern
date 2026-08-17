@@ -2,7 +2,7 @@ name: VeriWeave Govern CI
 
 on:
   push:
-    branches: [main, "agent/**"]
+    branches: [main, "agent/**", "publication/**"]
   pull_request:
 
 permissions:
@@ -58,6 +58,44 @@ jobs:
         with:
           name: governbench-research-smoke
           path: results/research-smoke/
+
+  publication-smoke:
+    name: EU Austria publication smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+      - name: Run legal audit and publication pipeline without external engines
+        env:
+          PUBLICATION_BOOTSTRAP_SAMPLES: "1000"
+          PUBLICATION_BOOTSTRAP_SEED: "20260817"
+        run: make publication-local
+      - name: Verify publication artifacts and draft boundary
+        run: |
+          test -s results/publication/legal-audit.json
+          test -s results/publication/report.json
+          test -s results/publication/report.html
+          test -s results/publication/predictions.csv
+          test -s results/publication/statistics.json
+          test -s results/publication/statistics.html
+          test -s results/publication/calibration-reliability.svg
+          test -s results/publication/annotator-a.csv
+          test -s results/publication/annotator-b.csv
+          test -s results/publication/adjudication.csv
+          grep -q '"status": "pass"' results/publication/legal-audit.json
+          grep -q '"label_status": "provisional-regulation-grounded"' results/publication/report.json
+          grep -q '"label_status": "provisional-regulation-grounded"' results/publication/statistics.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: publication-smoke
+          path: results/publication/
 
   package:
     name: Package metadata
