@@ -42,9 +42,13 @@ class GovernCase:
     attack_type: str | None = None
     temporal_policy_version: int = 1
     notes: str = ""
+    prohibition_reason: str | None = None
+    legal_basis: tuple[str, ...] = ()
+    evaluation_date: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         value = asdict(self)
         value["required_evidence"] = list(self.required_evidence)
         value["evidence"] = [item.to_dict() for item in self.evidence]
+        value["legal_basis"] = list(self.legal_basis)
         return value

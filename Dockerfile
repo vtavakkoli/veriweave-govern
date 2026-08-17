@@ -1,6 +1,6 @@
 FROM python:3.13-slim AS runtime
 
-ARG VERSION=0.3.0
+ARG VERSION=0.4.0
 
 LABEL org.opencontainers.image.title="VeriWeave Govern" \
       org.opencontainers.image.description="Deterministic policy enforcement, evidence governance, and scientific benchmarking for enterprise AI agents" \

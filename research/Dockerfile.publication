@@ -1,0 +1,21 @@
+FROM rust:bookworm AS cedar-builder
+
+RUN cargo install cedar-policy-cli --version 4.12.0 --locked
+
+FROM python:3.13-slim AS publication
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+COPY --from=cedar-builder /usr/local/cargo/bin/cedar /usr/local/bin/cedar
+COPY pyproject.toml README.md LICENSE NOTICE ./
+COPY app ./app
+COPY benchmark ./benchmark
+COPY research ./research
+COPY consulting ./consulting
+COPY standards ./standards
+RUN python -m pip install --upgrade pip && python -m pip install .
+
+ENTRYPOINT ["/bin/sh", "/app/research/run_publication.sh"]
