@@ -1,4 +1,4 @@
-.PHONY: install test lint run docker-up docker-down benchmark benchmark-detached benchmark-clean research research-quick research-docker
+.PHONY: install test lint run docker-up docker-down benchmark benchmark-detached benchmark-clean research research-quick research-docker publication publication-local publication-clean
 
 install:
 	python -m pip install -e ".[dev]"
@@ -38,3 +38,14 @@ research-quick:
 research-docker:
 	mkdir -p results
 	docker compose --profile research run --rm research
+
+publication:
+	mkdir -p results
+	docker compose --profile publication up --build --abort-on-container-exit --exit-code-from publication publication
+
+publication-local:
+	python -m research.regulatory_validation --output results/publication
+
+publication-clean:
+	docker compose --profile publication down --volumes --remove-orphans
+	rm -rf results/publication
