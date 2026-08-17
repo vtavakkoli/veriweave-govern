@@ -8,6 +8,7 @@ from benchmark.load_matrix import _concurrencies
 from research.calibration import train_calibrator
 from research.dataset import generate_governbench
 from research.governor import decide
+from research.legal_audit import audit
 from research.metrics import calibration_curve
 from research.regulatory_validation import (
     load_rows,
@@ -29,6 +30,42 @@ def test_regulatory_validation_set_is_complete_balanced_and_source_grounded():
     sources = load_source_registry(VALIDATION / "regulatory_sources.json")
     assert validate_dataset(rows, sources) == []
     assert len(rows) == 150
+
+
+def test_primary_law_temporal_audit_passes():
+    report = audit(VALIDATION)
+    assert report["status"] == "pass"
+    assert report["errors"] == []
+    assert report["warnings"] == []
+    assert report["cases"] == 150
+    assert report["source_count"] >= 20
+    assert report["ai_act_annex_iii_application_date"] == "2027-12-02"
+
+
+def test_digital_omnibus_source_is_pinned_and_future_cases_are_explicit():
+    registry = load_source_registry(VALIDATION / "regulatory_sources.json")
+    assert "EU-AIA-OMNIBUS-2026-1744" in registry
+    for source_id in ("EU-AIA-6-ANNEXIII", "EU-AIA-13-14", "EU-AIA-26", "EU-AIA-27"):
+        assert registry[source_id]["applicable_from"] == "2027-12-02"
+
+    rows = load_validation_rows(VALIDATION)
+    annex_iii_ids = {
+        row["case_id"]
+        for row in rows
+        if "EU-AIA-6-ANNEXIII" in row["source_ids"].split("|")
+    }
+    assert annex_iii_ids
+    by_id = {row["case_id"]: row for row in rows}
+    assert all(by_id[case_id]["evaluation_date"] >= "2027-12-02" for case_id in annex_iii_ids)
+    assert all("future" in by_id[case_id]["legal_status"] for case_id in annex_iii_ids)
+
+
+def test_publication_uses_real_edge_ollama_model_contract():
+    compose = (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
+    external = (ROOT / "research" / "external_baselines.py").read_text(encoding="utf-8")
+    assert "http://host.docker.internal:11434" in compose
+    assert "OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4:e2b}" in compose
+    assert 'os.getenv("OLLAMA_MODEL", "gemma4:e2b")' in external
 
 
 def test_generated_annotation_sheets_are_blind_and_cover_all_cases(tmp_path):
