@@ -16,6 +16,11 @@ COPY benchmark ./benchmark
 COPY research ./research
 COPY consulting ./consulting
 COPY standards ./standards
-RUN python -m pip install --upgrade pip && python -m pip install .
+# Windows checkouts can still present CRLF files to Docker before Git renormalization.
+# Normalize the publication entrypoint inside the image as an additional safeguard.
+RUN sed -i 's/\r$//' /app/research/run_publication.sh \
+    && chmod +x /app/research/run_publication.sh \
+    && python -m pip install --upgrade pip \
+    && python -m pip install .
 
 ENTRYPOINT ["/bin/sh", "/app/research/run_publication.sh"]
