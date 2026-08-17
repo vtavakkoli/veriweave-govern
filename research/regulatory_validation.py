@@ -197,8 +197,10 @@ def _evidence(row: dict[str, str]) -> tuple[Evidence, ...]:
             current=True,
             signed=True,
             content=(
-                "Controlled review-pack evidence documents the required control, "
-                "accountable owner and verification status."
+                "Approved policy section and control requirement document the "
+                "authorized purpose, scope, accountable owner, implementation "
+                "conditions, review evidence, verification result, approval record, "
+                "and operational safeguards for this governed action."
             ),
             label_valid=True,
             metadata={"validation_case": row["case_id"]},
