@@ -16,10 +16,12 @@ All notable changes to VeriWeave Govern are documented here. The project follows
 - a 150-case EU/Austria regulation-grounded publication validation set with 50 public-administration, 50 enterprise IT/DevOps and 50 data/AI-governance cases, stored as six reviewable 25-case partitions;
 - a snapshot-versioned official-source registry covering the EU AI Act, GDPR and selected Austrian DSG, IFG, E-Government and NIS/NIS2-related provisions;
 - blind annotator A/B worksheets, adjudication worksheet and automatic Cohen's-kappa reporting without fabricating human labels;
-- independently executable OPA/Rego 1.17.0 and Cedar 4.11.0 publication baselines;
+- independently executable OPA/Rego 1.17.0 and Cedar 4.12.0 publication baselines;
 - an actual local Ollama edge-LLM baseline using structured output, defaulting to `gemma3n:e2b`;
 - a Docker Compose `publication` profile that connects to host Ollama through `host.docker.internal:11434`;
-- per-domain publication metrics, calibration reliability bins and raw external-baseline details.
+- per-domain publication metrics, calibration reliability bins, an automatically generated SVG reliability diagram and raw external-baseline details;
+- a real service-level load matrix with at least 10,000 requests per default concurrency level (`1,4,16,32`) and HTML/JSON reports;
+- a `publication-suite` target combining the engineering benchmark, regulation-grounded external-baseline comparison and service load matrix.
 
 ### Changed
 
