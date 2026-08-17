@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
+from benchmark.load_matrix import _concurrencies
 from research.calibration import train_calibrator
 from research.dataset import generate_governbench
 from research.governor import decide
@@ -15,6 +18,7 @@ from research.regulatory_validation import (
     validate_blind_annotation_sheet,
     validate_dataset,
 )
+from research.reliability_report import render_svg
 
 ROOT = Path(__file__).resolve().parents[1]
 VALIDATION = ROOT / "research" / "validation"
@@ -68,3 +72,26 @@ def test_explicit_prohibition_is_fail_closed():
 def test_calibration_curve_accounts_for_every_sample():
     rows = calibration_curve([0, 0, 1, 1], [0.1, 0.4, 0.7, 0.95])
     assert sum(int(row["count"]) for row in rows) == 4
+
+
+def test_load_matrix_concurrency_parser_is_strict():
+    assert _concurrencies("1,4,16,32") == [1, 4, 16, 32]
+    with pytest.raises(ValueError):
+        _concurrencies("1,0,4")
+
+
+def test_reliability_svg_contains_accessible_labels_and_points():
+    svg = render_svg(
+        [
+            {
+                "bin_low": 0.7,
+                "bin_high": 0.8,
+                "count": 25,
+                "mean_confidence": 0.76,
+                "empirical_accuracy": 0.72,
+            }
+        ]
+    )
+    assert "Evidence reliability diagram" in svg
+    assert "Mean trust score" in svg
+    assert "circle" in svg
