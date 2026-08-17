@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import random
+from collections.abc import Iterable
 from statistics import fmean
-from typing import Iterable
 
 CLASSES = ("allow", "review", "deny")
 
