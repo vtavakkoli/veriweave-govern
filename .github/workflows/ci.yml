@@ -2,7 +2,7 @@ name: VeriWeave Govern CI
 
 on:
   push:
-    branches: [main, "agent/**", "fix/**"]
+    branches: [main, "agent/**"]
   pull_request:
 
 permissions:
