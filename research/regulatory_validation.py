@@ -33,6 +33,22 @@ def load_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
+def load_validation_rows(path: Path) -> list[dict[str, str]]:
+    if path.is_file():
+        return load_rows(path)
+    rows: list[dict[str, str]] = []
+    for name in (
+        "public-administration-1.csv",
+        "public-administration-2.csv",
+        "enterprise-it-devops-1.csv",
+        "enterprise-it-devops-2.csv",
+        "data-ai-governance-1.csv",
+        "data-ai-governance-2.csv",
+    ):
+        rows.extend(load_rows(path / name))
+    return rows
+
+
 def load_source_registry(path: Path) -> dict[str, dict[str, object]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     return {item["id"]: item for item in payload["sources"]}
@@ -370,7 +386,7 @@ def main() -> int:
     parser.add_argument(
         "--dataset",
         type=Path,
-        default=Path("research/validation/eu_at_reggov_150.csv"),
+        default=Path("research/validation"),
     )
     parser.add_argument(
         "--sources",
@@ -387,7 +403,7 @@ def main() -> int:
     parser.add_argument("--require-external", action="store_true")
     args = parser.parse_args()
 
-    rows = load_rows(args.dataset)
+    rows = load_validation_rows(args.dataset)
     sources = load_source_registry(args.sources)
     errors = validate_dataset(rows, sources)
     annotator_a_path = args.annotator_a or args.output / "annotator-a.csv"
