@@ -14,6 +14,7 @@ from urllib.request import Request, urlopen
 from research.model import GovernCase
 
 DECISIONS = {"allow", "review", "deny"}
+DEFAULT_OLLAMA_MODEL = "gemma4:31b-cloud"
 
 
 @dataclass(frozen=True)
@@ -210,13 +211,13 @@ def ollama_decision(
     case: GovernCase,
     source_registry: dict[str, dict[str, object]],
     *,
-    timeout: float = 90.0,
+    timeout: float = 120.0,
 ) -> ExternalDecision:
     base_url = os.getenv(
         "OLLAMA_BASE_URL",
         "http://host.docker.internal:11434",
     ).rstrip("/")
-    model = os.getenv("OLLAMA_MODEL", "gemma4:e2b")
+    model = os.getenv("OLLAMA_MODEL", DEFAULT_OLLAMA_MODEL)
     facts = {
         "action": case.action,
         "resource": case.resource,
@@ -265,12 +266,13 @@ def ollama_decision(
         decision = str(parsed.get("decision", "")).lower()
         if decision not in DECISIONS:
             raise ValueError(f"unexpected Ollama decision: {parsed!r}")
+        reason = str(parsed.get("reason", ""))
         return ExternalDecision(
             "ollama",
             decision,
             True,
             (time.perf_counter() - started) * 1000,
-            str(parsed.get("reason", "")),
+            f"model={model}; reason={reason}",
         )
     except (HTTPError, URLError, TimeoutError, OSError, ValueError, json.JSONDecodeError) as exc:
         return ExternalDecision(
@@ -278,5 +280,5 @@ def ollama_decision(
             "review",
             False,
             (time.perf_counter() - started) * 1000,
-            str(exc),
+            f"model={model}; error={exc}",
         )
