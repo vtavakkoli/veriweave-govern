@@ -230,21 +230,15 @@ def ollama_decision(
         "provided_evidence_types": [item.evidence_type for item in case.evidence],
         "evaluation_date": case.evaluation_date,
     }
-    schema = {
-        "type": "object",
-        "properties": {
-            "decision": {"type": "string", "enum": ["allow", "review", "deny"]},
-            "reason": {"type": "string"},
-        },
-        "required": ["decision", "reason"],
-        "additionalProperties": False,
-    }
     prompt = (
         "You are a conservative governance decision baseline. Decide only among "
         "allow, review, deny. Use only the supplied case facts and source summaries. "
         "Use deny only when the supplied facts clearly match a prohibition or an "
         "unacceptable disclosure. Use review when human/legal/privacy/security "
-        "assessment or missing evidence is required. Do not invent exceptions or facts.\n\n"
+        "assessment or missing evidence is required. Do not invent exceptions or facts. "
+        "Return ONLY valid JSON with exactly two keys: decision and reason. "
+        "The decision value MUST be one of allow, review, deny. Do not use Markdown, "
+        "code fences, headings, or text outside the JSON object.\n\n"
         f"CASE FACTS:\n{json.dumps(facts, indent=2, sort_keys=True)}\n\n"
         f"OFFICIAL-SOURCE SUMMARIES:\n{_legal_context(case, source_registry)}"
     )
@@ -256,23 +250,27 @@ def ollama_decision(
                 "model": model,
                 "messages": [{"role": "user", "content": prompt}],
                 "stream": False,
-                "format": schema,
+                "format": "json",
                 "options": {"temperature": 0},
             },
             timeout,
         )
         content = payload.get("message", {}).get("content", "")
         parsed = json.loads(content)
-        decision = str(parsed.get("decision", "")).lower()
+        decision = str(parsed.get("decision", "")).strip().lower()
         if decision not in DECISIONS:
             raise ValueError(f"unexpected Ollama decision: {parsed!r}")
-        reason = str(parsed.get("reason", ""))
+        reason = str(parsed.get("reason", "")).strip()
+        resolved_model = str(payload.get("model", model))
         return ExternalDecision(
             "ollama",
             decision,
             True,
             (time.perf_counter() - started) * 1000,
-            f"model={model}; reason={reason}",
+            (
+                f"requested_model={model}; resolved_model={resolved_model}; "
+                f"reason={reason}"
+            ),
         )
     except (HTTPError, URLError, TimeoutError, OSError, ValueError, json.JSONDecodeError) as exc:
         return ExternalDecision(
