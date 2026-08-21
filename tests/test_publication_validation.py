@@ -60,12 +60,16 @@ def test_digital_omnibus_source_is_pinned_and_future_cases_are_explicit():
     assert all("future" in by_id[case_id]["legal_status"] for case_id in annex_iii_ids)
 
 
-def test_publication_uses_real_edge_ollama_model_contract():
+def test_publication_uses_real_ollama_gemma4_31b_contract():
     compose = (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
     external = (ROOT / "research" / "external_baselines.py").read_text(encoding="utf-8")
+    experiments = (ROOT / "research" / "experiments.py").read_text(encoding="utf-8")
     assert "http://host.docker.internal:11434" in compose
-    assert "OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4:e2b}" in compose
-    assert 'os.getenv("OLLAMA_MODEL", "gemma4:e2b")' in external
+    assert "OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4:31b-cloud}" in compose
+    assert 'DEFAULT_OLLAMA_MODEL = "gemma4:31b-cloud"' in external
+    assert 'f"{base_url}/api/chat"' in external
+    assert '"format": schema' in external
+    assert '"llm-proxy"' not in experiments
 
 
 def test_generated_annotation_sheets_are_blind_and_cover_all_cases(tmp_path):

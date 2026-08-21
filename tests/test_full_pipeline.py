@@ -4,22 +4,31 @@ from pathlib import Path
 
 import pytest
 
-from research.full_pipeline import _env_int, _ollama_model_names, build_stages
+from research.full_pipeline import (
+    DEFAULT_OLLAMA_MODEL,
+    _env_int,
+    _ollama_model_names,
+    build_stages,
+)
 
 
 def test_ollama_model_names_accepts_name_and_model_fields():
     payload = {
         "models": [
-            {"name": "gemma4:e2b", "model": "gemma4:e2b"},
+            {"name": "gemma4:31b-cloud", "model": "gemma4:31b-cloud"},
             {"name": "qwen:latest"},
             {"model": "other:model"},
         ]
     }
     assert _ollama_model_names(payload) == {
-        "gemma4:e2b",
+        "gemma4:31b-cloud",
         "qwen:latest",
         "other:model",
     }
+
+
+def test_default_publication_llm_is_real_gemma4_31b():
+    assert DEFAULT_OLLAMA_MODEL == "gemma4:31b-cloud"
 
 
 def test_full_pipeline_plan_contains_all_publication_stages(monkeypatch, tmp_path: Path):

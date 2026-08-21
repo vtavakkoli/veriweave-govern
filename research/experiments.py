@@ -9,7 +9,7 @@ import time
 from pathlib import Path
 from statistics import fmean
 
-from research.baselines import abac, llm_proxy, rbac, veriweave
+from research.baselines import abac, rbac, veriweave
 from research.calibration import evidence_rows, train_calibrator
 from research.dataset import generate_governbench, write_jsonl
 from research.governor import decide, governance_certificate
@@ -23,7 +23,7 @@ from research.metrics import (
     summarize_runs,
 )
 
-BASELINES = ("rbac", "abac", "llm-proxy", "veriweave")
+BASELINES = ("rbac", "abac", "veriweave")
 ABLATIONS = (
     "evidence-gate",
     "contradiction-check",
@@ -57,7 +57,6 @@ def evaluate_seed(seed: int, case_count: int) -> dict[str, object]:
     predictions = {
         "rbac": [rbac(case) for case in test],
         "abac": [abac(case) for case in test],
-        "llm-proxy": [llm_proxy(case) for case in test],
         "veriweave": [veriweave(case, model) for case in test],
     }
     baseline_metrics = {}
@@ -179,7 +178,9 @@ def render_html(report: dict[str, object]) -> str:
         ".note{padding:14px;background:#fff8e1}</style>"
         "<h1>GovernBench Scientific Report</h1>"
         "<p class='note'><b>Scientific boundary:</b> synthetic, oracle-labelled reference "
-        "benchmark; not human-validated real-world effectiveness or legal certification.</p>"
+        "benchmark; not human-validated real-world effectiveness or legal certification. "
+        "LLM comparison is intentionally excluded here and executed only in the publication "
+        "validation against the configured real Ollama model.</p>"
         "<table><tr><th>Method</th><th>Accuracy mean [95% CI]</th><th>Macro F1</th>"
         "<th>False-Allow</th><th>GASR</th></tr>"
         + "".join(rows)
@@ -208,6 +209,7 @@ def main() -> int:
             "seeds": args.seeds,
             "cases_per_seed": args.cases,
             "synthetic": True,
+            "llm_baseline": "excluded; real Ollama baseline runs in publication validation",
         },
         "aggregate": aggregate(runs),
         "scalability": latency_profile(),

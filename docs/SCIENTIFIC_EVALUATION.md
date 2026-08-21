@@ -18,9 +18,11 @@ decision?
 - **H5 External policy comparison:** the tri-state governance model can be
   compared reproducibly with independently executed OPA/Rego and Cedar policy
   engines.
-- **H6 Human complementarity:** human + VeriWeave is the target operating
+- **H6 Real LLM comparison:** regulation-grounded cases can be evaluated against
+  an actually invoked Ollama model rather than a deterministic language proxy.
+- **H7 Human complementarity:** human + VeriWeave is the target operating
   model; this project does not claim to replace accountable human governance.
-- **H7 External validity:** performance on the regulation-grounded EU/Austria
+- **H8 External validity:** performance on the regulation-grounded EU/Austria
   set remains strong when final evaluation uses independently annotated and
   adjudicated labels rather than generator/oracle labels.
 
@@ -40,7 +42,9 @@ oracle decision is review/deny.
 Aggregate metrics use bootstrap 95% confidence intervals across seed-level
 results. False-allow rate, GASR and calibration are first-class safety metrics.
 
-The built-in deterministic language-style proxy is **not an actual LLM result**.
+GovernBench reports RBAC, ABAC and VeriWeave. The former deterministic
+`llm-proxy` has been removed from this stage so it cannot be mistaken for an
+actual LLM result. Real LLM comparison is isolated in publication validation.
 
 ## EU/Austria regulation-grounded validation
 
@@ -75,12 +79,17 @@ The publication profile executes:
 - VeriWeave with a calibrator trained on a separate synthetic seed;
 - OPA/Rego 1.17.0;
 - Cedar 4.12.0;
-- an actual Ollama model, default `gemma4:e2b`.
+- a real Ollama model, default `gemma4:31b-cloud`.
 
 OPA and Cedar are deliberately coarse structured-policy baselines; their exact
 policies are versioned under `research/policy_baselines/`. The LLM receives case
 facts and official-source summaries, but never provisional/adjudicated labels,
 provisional rationales, prohibition metadata or VeriWeave predictions.
+
+The Docker pipeline reaches the host Ollama API through
+`http://host.docker.internal:11434`. Before any experimental stage, preflight
+performs a real `/api/chat` invocation using `OLLAMA_MODEL`. The pipeline does
+not silently substitute a proxy or another model if that call fails.
 
 ## Publication statistical analysis
 
@@ -124,11 +133,11 @@ Increase `LOAD_MATRIX_REQUESTS_PER_LEVEL` to 25,000 for an approximately
 
 ## Reproduction
 
-Prepare the real local Ollama comparator:
+Confirm the intended Ollama model is callable on the host:
 
 ```bash
-ollama pull gemma4:e2b
 ollama list
+ollama run gemma4:31b-cloud
 ```
 
 Run the complete artifact:
@@ -139,6 +148,6 @@ make publication-suite
 ```
 
 Capture the Git commit, Docker image versions, OPA/Cedar versions, Ollama
-version/model digest, hardware, raw reports, `legal-audit.json`, publication
-statistics, load-matrix artifacts and completed annotation/adjudication files
-for the paper artifact.
+version/model tag or digest, execution service/hardware information, raw reports,
+`legal-audit.json`, publication statistics, load-matrix artifacts and completed
+annotation/adjudication files for the paper artifact.
