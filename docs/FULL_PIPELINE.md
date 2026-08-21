@@ -12,14 +12,16 @@ The `pipeline` service executes, in order:
 4. 150-case publication validation
 5. real OPA/Rego baseline
 6. real Cedar baseline
-7. local Ollama `gemma4:e2b` baseline
+7. real Ollama `gemma4:31b-cloud` baseline through the host Ollama `/api/chat` endpoint
 8. VeriWeave comparison
 9. publication statistics with bootstrap confidence intervals and paired tests
 10. calibration reliability diagram
 11. multi-concurrency service load matrix
 12. artifact verification and `pipeline-summary.json`
 
-The pipeline does **not** download or pull an Ollama model. It only checks that the configured model already exists on the host. Docker reaches the host Ollama service through `http://host.docker.internal:11434` by default.
+The synthetic GovernBench stage no longer reports the deterministic `llm-proxy` as an LLM baseline. The real LLM comparison is performed only in the regulation-grounded publication-validation stage, where all 150 cases are sent to the configured Ollama model.
+
+The pipeline does **not** download or pull an Ollama model. It checks the host Ollama API at `http://host.docker.internal:11434` and performs a real `/api/chat` probe before any benchmark stage starts. A failed model invocation fails the pipeline.
 
 ## One Docker Compose pipeline command
 
@@ -41,16 +43,24 @@ For a one-command PowerShell wrapper that also performs cleanup in `finally`:
 .\scripts\run-full-pipeline.ps1
 ```
 
-## Existing local Ollama model
+## Existing Ollama model on the host
 
 Default configuration:
 
 ```text
 OLLAMA_BASE_URL=http://host.docker.internal:11434
-OLLAMA_MODEL=gemma4:e2b
+OLLAMA_MODEL=gemma4:31b-cloud
+OLLAMA_PROBE_TIMEOUT=120
 ```
 
-No `ollama pull` is executed. If the model is missing, the preflight fails clearly and lists the models visible to the Ollama API.
+No `ollama pull` is executed. The preflight first inspects `/api/tags` and then performs an actual `/api/chat` request with `OLLAMA_MODEL`. This makes it explicit in the logs and `pipeline-summary.json` that a real model invocation succeeded before publication evaluation begins.
+
+If you prefer another already available model, override it before the Compose command:
+
+```powershell
+$env:OLLAMA_MODEL = "gemma4:31b"
+docker compose --profile pipeline up --build --abort-on-container-exit --exit-code-from pipeline pipeline
+```
 
 ## Main artifacts
 
@@ -79,7 +89,7 @@ results/
     └── adjudication.csv
 ```
 
-`pipeline-summary.json` records stage status, elapsed time, the configured Ollama model, and whether every expected artifact exists.
+`pipeline-summary.json` records stage status, elapsed time, the configured Ollama model, the real-model preflight latency, and whether every expected artifact exists. `external-details.jsonl` records the configured Ollama model with each model decision so the publication artifact identifies the actual model used.
 
 ## Useful overrides
 
