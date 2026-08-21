@@ -8,8 +8,7 @@ import time
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+from urllib import error, request
 
 
 DEFAULT_OLLAMA_MODEL = "gemma4:31b-cloud"
@@ -40,25 +39,29 @@ def _wait_json(url: str, timeout_seconds: float = 60.0) -> object:
     last_error = "endpoint unavailable"
     while time.monotonic() < deadline:
         try:
-            with urlopen(url, timeout=5.0) as response:
+            with request.urlopen(url, timeout=5.0) as response:
                 if 200 <= response.status < 300:
                     raw = response.read().decode("utf-8")
                     return json.loads(raw) if raw else {}
                 last_error = f"HTTP {response.status}"
-        except (URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+        except (error.URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
             last_error = str(exc)
         time.sleep(1.0)
     raise RuntimeError(f"Timed out waiting for {url}: {last_error}")
 
 
-def _post_json(url: str, payload: dict[str, object], timeout: float = 90.0) -> dict[str, object]:
-    request = Request(
+def _post_json(
+    url: str,
+    payload: dict[str, object],
+    timeout: float = 90.0,
+) -> dict[str, object]:
+    http_request = request.Request(
         url,
         data=json.dumps(payload).encode("utf-8"),
         headers={"Content-Type": "application/json", "Accept": "application/json"},
         method="POST",
     )
-    with urlopen(request, timeout=timeout) as response:
+    with request.urlopen(http_request, timeout=timeout) as response:
         return json.loads(response.read().decode("utf-8"))
 
 
@@ -88,7 +91,10 @@ def _probe_ollama(base_url: str, model: str) -> dict[str, object]:
             "messages": [
                 {
                     "role": "user",
-                    "content": "Reply with exactly READY. This is a publication-pipeline connectivity probe.",
+                    "content": (
+                        "Reply with exactly READY. This is a publication-pipeline "
+                        "connectivity probe."
+                    ),
                 }
             ],
             "stream": False,
@@ -131,7 +137,7 @@ def preflight() -> dict[str, object]:
     print(f"[preflight] invoking real Ollama model: {ollama_model}", flush=True)
     try:
         probe = _probe_ollama(ollama_url, ollama_model)
-    except (HTTPError, URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+    except (error.URLError, TimeoutError, OSError, RuntimeError, json.JSONDecodeError) as exc:
         rendered = ", ".join(sorted(available)) or "<none>"
         raise RuntimeError(
             f"Real Ollama invocation failed for {ollama_model!r} at {ollama_url}: {exc}. "
@@ -378,7 +384,15 @@ def main() -> int:
         )
         print(f"\nFULL PUBLICATION PIPELINE PASSED: {summary_path}", flush=True)
         return 0
-    except Exception as exc:
+    except (
+        subprocess.CalledProcessError,
+        RuntimeError,
+        ValueError,
+        error.URLError,
+        TimeoutError,
+        OSError,
+        json.JSONDecodeError,
+    ) as exc:
         artifacts = _expected_artifacts(results_root)
         _write_summary(
             summary_path,
