@@ -6,7 +6,7 @@ The publication profile adds three independent comparator paths to the 150-case 
 |---|---|---|
 | OPA/Rego | Open Policy Agent 1.17.0 | General-purpose policy-as-code comparison |
 | Cedar | `cedar-policy-cli` 4.12.0 | Authorization-policy comparison |
-| Ollama | `gemma4:e2b` | Actual local edge-LLM decision baseline |
+| Ollama | `gemma4:31b-cloud` | Actual LLM decision baseline invoked through host Ollama |
 
 The OPA and Cedar policies deliberately use the same small structured fact set:
 prohibition status, protected external disclosure, impact, unknown-action state,
@@ -26,21 +26,25 @@ label, provisional rationale, prohibition metadata, adjudicated label or
 VeriWeave decision. Structured JSON output is requested with temperature zero
 for repeatability. Model output can still vary across model/runtime versions, so
 publication artifacts should record the Ollama version, exact model tag/digest,
-hardware, and evaluation date used.
+hardware/service configuration, and evaluation date used.
 
 Default host endpoint and model:
 
 ```text
 OLLAMA_BASE_URL=http://host.docker.internal:11434
-OLLAMA_MODEL=gemma4:e2b
+OLLAMA_MODEL=gemma4:31b-cloud
 ```
 
-Before the full run:
+Before the full run, confirm the intended model works through Ollama:
 
 ```bash
-ollama pull gemma4:e2b
 ollama list
+ollama run gemma4:31b-cloud
 ```
+
+The publication pipeline never performs an automatic model pull. Its preflight
+issues a real `/api/chat` request and fails if the configured model cannot be
+invoked.
 
 Then execute the publication profile:
 
@@ -58,7 +62,7 @@ For a defensible comparison:
 
 1. keep the same 150-case frozen input set for every method;
 2. do not expose researcher/adjudicated labels to any comparator;
-3. use the same legal-source snapshot for the local LLM prompt;
+3. use the same legal-source snapshot for the LLM prompt;
 4. record baseline availability failures rather than silently replacing failed
    calls with another model;
 5. report model/runtime versions and exact policy-engine versions;
@@ -67,5 +71,6 @@ For a defensible comparison:
 7. report overall and per-domain metrics rather than only the best aggregate
    score.
 
-The deterministic `llm-proxy` used in synthetic GovernBench is **not** an LLM
-baseline and must remain clearly separated from this actual Ollama experiment.
+The synthetic GovernBench report no longer includes the deterministic
+`llm-proxy`. The only LLM comparator in the publication workflow is the real
+Ollama invocation described above.
