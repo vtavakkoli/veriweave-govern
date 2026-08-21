@@ -101,7 +101,7 @@ services:
       CEDAR_BIN: cedar
       CEDAR_POLICY_DIR: research/policy_baselines/cedar
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
-      OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4:e2b}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4:31b-cloud}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command:
@@ -168,7 +168,7 @@ services:
       CEDAR_BIN: cedar
       CEDAR_POLICY_DIR: research/policy_baselines/cedar
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
-      OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4:e2b}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4:31b-cloud}
       PUBLICATION_BOOTSTRAP_SAMPLES: ${PUBLICATION_BOOTSTRAP_SAMPLES:-10000}
       PUBLICATION_BOOTSTRAP_SEED: ${PUBLICATION_BOOTSTRAP_SEED:-20260817}
       LOAD_MATRIX_REQUESTS_PER_LEVEL: ${LOAD_MATRIX_REQUESTS_PER_LEVEL:-10000}
