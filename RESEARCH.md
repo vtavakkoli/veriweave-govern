@@ -10,7 +10,7 @@ than adding an LLM to the final authorization path.
 - five synthetic domains with adversarial and temporal cases;
 - 2,000 cases per seed and 30 independent seeds by default;
 - learned evidence calibration;
-- RBAC, ABAC, deterministic language-style proxy and VeriWeave;
+- RBAC, ABAC and VeriWeave deterministic comparisons;
 - false-allow/deny/review, macro-F1, GASR, Brier, ECE, AUROC and AUPRC;
 - six ablations, counterfactuals, governance certificates and temporal replay.
 
@@ -20,9 +20,14 @@ Run:
 make research
 ```
 
-The committed `results/research-v1/` reference run is synthetic/oracle-labelled.
-It demonstrates reproducibility and controlled component evaluation; it is not
-evidence of real-world regulatory effectiveness.
+The synthetic GovernBench layer does **not** report a deterministic language-style
+proxy as an LLM baseline. Real LLM evaluation is intentionally isolated in the
+EU/Austria publication-validation layer, where the configured Ollama model is
+actually invoked through `/api/chat`.
+
+The committed `results/research-v1/` reference run predates this change and is
+synthetic/oracle-labelled. It demonstrates reproducibility and controlled
+component evaluation; it is not evidence of real-world regulatory effectiveness.
 
 ### EU/Austria publication validation
 
@@ -37,7 +42,7 @@ validation set**:
 - two blind independent-annotation sheets;
 - Cohen's kappa and an adjudication workflow;
 - real OPA/Rego 1.17.0 and Cedar 4.12.0 executables;
-- an actual local Ollama edge-model baseline (`gemma4:e2b` by default);
+- an actual Ollama LLM baseline (`gemma4:31b-cloud` by default);
 - per-domain metrics, raw predictions and calibration reliability data;
 - a real HTTP load matrix for service-level latency/throughput reporting.
 
@@ -56,12 +61,15 @@ and application dates, and temporal consistency:
 make publication-verify
 ```
 
-Prepare Ollama on the host:
+Verify the intended model is available through the host Ollama service:
 
 ```bash
-ollama pull gemma4:e2b
 ollama list
+ollama run gemma4:31b-cloud
 ```
+
+The publication pipeline itself never executes `ollama pull`. It calls the host
+Ollama HTTP API directly and performs a real model invocation in preflight.
 
 Then run all external comparators:
 
@@ -103,6 +111,10 @@ results/publication/
 ├── annotator-b.csv
 └── adjudication.csv
 ```
+
+`external-details.jsonl` records the actual Ollama model name with each LLM
+result. `results/pipeline-summary.json` also records the configured model and
+real-model preflight latency.
 
 See:
 
