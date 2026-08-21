@@ -63,12 +63,15 @@ def test_digital_omnibus_source_is_pinned_and_future_cases_are_explicit():
 def test_publication_uses_real_ollama_gemma4_31b_contract():
     compose = (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
     external = (ROOT / "research" / "external_baselines.py").read_text(encoding="utf-8")
+    pipeline = (ROOT / "research" / "full_pipeline.py").read_text(encoding="utf-8")
     experiments = (ROOT / "research" / "experiments.py").read_text(encoding="utf-8")
     assert "http://host.docker.internal:11434" in compose
     assert "OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4:31b-cloud}" in compose
     assert 'DEFAULT_OLLAMA_MODEL = "gemma4:31b-cloud"' in external
     assert 'f"{base_url}/api/chat"' in external
-    assert '"format": schema' in external
+    assert '"format": "json"' in external
+    assert '"format": "json"' in pipeline
+    assert '"format": schema' not in external
     assert '"llm-proxy"' not in experiments
 
 
