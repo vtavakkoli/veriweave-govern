@@ -93,12 +93,15 @@ def _probe_ollama(base_url: str, model: str) -> dict[str, object]:
                 {
                     "role": "user",
                     "content": (
-                        "Reply with exactly READY. This is a publication-pipeline "
-                        "connectivity probe."
+                        "This is a publication-pipeline output-contract probe. "
+                        "Return ONLY valid JSON with exactly two keys: decision and reason. "
+                        "Set decision to review and reason to connectivity probe. "
+                        "Do not use Markdown, code fences, or any text outside the JSON object."
                     ),
                 }
             ],
             "stream": False,
+            "format": "json",
             "options": {"temperature": 0},
         },
         timeout=float(os.getenv("OLLAMA_PROBE_TIMEOUT", "120")),
@@ -107,10 +110,23 @@ def _probe_ollama(base_url: str, model: str) -> dict[str, object]:
     content = message.get("content", "") if isinstance(message, dict) else ""
     if not isinstance(content, str) or not content.strip():
         raise RuntimeError(f"Ollama model {model!r} returned no message content during probe")
+    try:
+        parsed = json.loads(content)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(
+            f"Ollama model {model!r} did not honor JSON mode during probe: {content[:160]!r}"
+        ) from exc
+    decision = str(parsed.get("decision", "")).strip().lower()
+    reason = str(parsed.get("reason", "")).strip()
+    if decision not in {"allow", "review", "deny"} or not reason:
+        raise RuntimeError(
+            f"Ollama model {model!r} returned an invalid governance JSON contract: {parsed!r}"
+        )
     return {
         "probe_passed": True,
         "probe_latency_ms": round((time.perf_counter() - started) * 1000, 3),
-        "probe_response": content.strip()[:80],
+        "probe_decision": decision,
+        "resolved_model": str(payload.get("model", model)),
     }
 
 
@@ -146,16 +162,18 @@ def preflight() -> dict[str, object]:
         ) from exc
 
     print(
-        f"[preflight] real Ollama invocation succeeded: {ollama_model} "
-        f"({probe['probe_latency_ms']} ms)",
+        f"[preflight] real Ollama JSON invocation succeeded: {ollama_model} "
+        f"-> {probe['resolved_model']} ({probe['probe_latency_ms']} ms)",
         flush=True,
     )
     return {
         "opa_url": opa_url,
         "ollama_base_url": ollama_url,
         "ollama_model": ollama_model,
+        "ollama_resolved_model": probe["resolved_model"],
         "ollama_probe_passed": probe["probe_passed"],
         "ollama_probe_latency_ms": probe["probe_latency_ms"],
+        "ollama_probe_decision": probe["probe_decision"],
         "model_pull_performed": False,
     }
 
