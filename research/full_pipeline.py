@@ -8,8 +8,11 @@ import time
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from urllib.error import URLError
-from urllib.request import urlopen
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
+
+
+DEFAULT_OLLAMA_MODEL = "gemma4:31b-cloud"
 
 
 @dataclass
@@ -48,6 +51,17 @@ def _wait_json(url: str, timeout_seconds: float = 60.0) -> object:
     raise RuntimeError(f"Timed out waiting for {url}: {last_error}")
 
 
+def _post_json(url: str, payload: dict[str, object], timeout: float = 90.0) -> dict[str, object]:
+    request = Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json", "Accept": "application/json"},
+        method="POST",
+    )
+    with urlopen(request, timeout=timeout) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
 def _ollama_model_names(payload: object) -> set[str]:
     if not isinstance(payload, dict):
         return set()
@@ -65,12 +79,40 @@ def _ollama_model_names(payload: object) -> set[str]:
     return names
 
 
+def _probe_ollama(base_url: str, model: str) -> dict[str, object]:
+    started = time.perf_counter()
+    payload = _post_json(
+        f"{base_url}/api/chat",
+        {
+            "model": model,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "Reply with exactly READY. This is a publication-pipeline connectivity probe.",
+                }
+            ],
+            "stream": False,
+            "options": {"temperature": 0},
+        },
+        timeout=float(os.getenv("OLLAMA_PROBE_TIMEOUT", "120")),
+    )
+    message = payload.get("message", {})
+    content = message.get("content", "") if isinstance(message, dict) else ""
+    if not isinstance(content, str) or not content.strip():
+        raise RuntimeError(f"Ollama model {model!r} returned no message content during probe")
+    return {
+        "probe_passed": True,
+        "probe_latency_ms": round((time.perf_counter() - started) * 1000, 3),
+        "probe_response": content.strip()[:80],
+    }
+
+
 def preflight() -> dict[str, object]:
     opa_url = os.getenv("OPA_URL", "http://opa:8181").rstrip("/")
     ollama_url = os.getenv(
         "OLLAMA_BASE_URL", "http://host.docker.internal:11434"
     ).rstrip("/")
-    ollama_model = os.getenv("OLLAMA_MODEL", "gemma4:e2b")
+    ollama_model = os.getenv("OLLAMA_MODEL", DEFAULT_OLLAMA_MODEL)
 
     print(f"[preflight] waiting for OPA at {opa_url}", flush=True)
     _wait_json(f"{opa_url}/health?plugins", timeout_seconds=60.0)
@@ -78,18 +120,35 @@ def preflight() -> dict[str, object]:
     print(f"[preflight] checking host Ollama at {ollama_url}", flush=True)
     tags = _wait_json(f"{ollama_url}/api/tags", timeout_seconds=30.0)
     available = _ollama_model_names(tags)
-    if ollama_model not in available:
-        rendered = ", ".join(sorted(available)) or "<none>"
-        raise RuntimeError(
-            f"Required Ollama model {ollama_model!r} is not installed. "
-            f"Available models: {rendered}. The pipeline never pulls models automatically."
+    if available and ollama_model not in available:
+        rendered = ", ".join(sorted(available))
+        print(
+            f"[preflight] model {ollama_model!r} is not listed by /api/tags; "
+            f"visible models: {rendered}. Trying a real /api/chat invocation anyway.",
+            flush=True,
         )
 
-    print(f"[preflight] Ollama model found: {ollama_model}", flush=True)
+    print(f"[preflight] invoking real Ollama model: {ollama_model}", flush=True)
+    try:
+        probe = _probe_ollama(ollama_url, ollama_model)
+    except (HTTPError, URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+        rendered = ", ".join(sorted(available)) or "<none>"
+        raise RuntimeError(
+            f"Real Ollama invocation failed for {ollama_model!r} at {ollama_url}: {exc}. "
+            f"Models visible to /api/tags: {rendered}. The pipeline never pulls models automatically."
+        ) from exc
+
+    print(
+        f"[preflight] real Ollama invocation succeeded: {ollama_model} "
+        f"({probe['probe_latency_ms']} ms)",
+        flush=True,
+    )
     return {
         "opa_url": opa_url,
         "ollama_base_url": ollama_url,
         "ollama_model": ollama_model,
+        "ollama_probe_passed": probe["probe_passed"],
+        "ollama_probe_latency_ms": probe["probe_latency_ms"],
         "model_pull_performed": False,
     }
 
