@@ -1,4 +1,5 @@
 import json
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from app.audit import AuditLedger
@@ -126,6 +127,45 @@ def test_audit_chain_is_valid_for_untampered_records(tmp_path: Path) -> None:
     verification = engine.audit_ledger.verify()
     assert verification["valid"] is True
     assert verification["records"] == 2
+
+
+def test_audit_chain_continues_across_process_restart(tmp_path: Path) -> None:
+    path = tmp_path / "audit.jsonl"
+    first_ledger = AuditLedger(path, "test-key")
+    first = first_ledger.append({"sequence": 1})
+
+    restarted_ledger = AuditLedger(path, "test-key")
+    second = restarted_ledger.append({"sequence": 2})
+
+    assert second.previous_hash == first.record_hash
+    assert restarted_ledger.verify()["valid"] is True
+    assert restarted_ledger.verify()["records"] == 2
+
+
+def test_audit_append_uses_cached_head_instead_of_rescanning(tmp_path: Path) -> None:
+    ledger = AuditLedger(tmp_path / "audit.jsonl", "test-key")
+    ledger.append({"sequence": 1})
+
+    def unexpected_rescan() -> str:
+        raise AssertionError("append must not rescan the complete audit ledger")
+
+    ledger._read_head_hash = unexpected_rescan  # type: ignore[method-assign]
+    ledger.append({"sequence": 2})
+
+    verification = ledger.verify()
+    assert verification["valid"] is True
+    assert verification["records"] == 2
+
+
+def test_audit_chain_remains_valid_under_concurrent_appends(tmp_path: Path) -> None:
+    ledger = AuditLedger(tmp_path / "audit.jsonl", "test-key")
+
+    with ThreadPoolExecutor(max_workers=16) as executor:
+        list(executor.map(lambda sequence: ledger.append({"sequence": sequence}), range(250)))
+
+    verification = ledger.verify()
+    assert verification["valid"] is True
+    assert verification["records"] == 250
 
 
 def test_audit_chain_detects_tampered_signature(tmp_path: Path) -> None:
