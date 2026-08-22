@@ -74,11 +74,10 @@ class AuditLedger:
 
     def recent(self, limit: int = 50) -> list[dict[str, Any]]:
         rows: list[dict[str, Any]] = []
-        with self._lock:
-            with self.path.open("r", encoding="utf-8") as handle:
-                for line in handle:
-                    if line.strip():
-                        rows.append(json.loads(line))
+        with self._lock, self.path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                if line.strip():
+                    rows.append(json.loads(line))
         return list(reversed(rows[-limit:]))
 
     def verify(self) -> dict[str, Any]:
@@ -106,7 +105,10 @@ class AuditLedger:
                     expected_hash = hashlib.sha256(
                         (previous_hash + canonical).encode("utf-8")
                     ).hexdigest()
-                    if record["previous_hash"] != previous_hash or record["record_hash"] != expected_hash:
+                    if (
+                        record["previous_hash"] != previous_hash
+                        or record["record_hash"] != expected_hash
+                    ):
                         return {"valid": False, "records": count, "failed_at_line": line_number}
                     if self.signing_key:
                         expected_signature = hmac.new(
