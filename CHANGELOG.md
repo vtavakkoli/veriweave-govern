@@ -8,19 +8,24 @@ All notable changes to VeriWeave Govern are documented here. The project follows
 
 - machine-checkable primary-law and temporal-applicability audit for the 150-case EU/Austria publication validation set;
 - human-readable 2026-08-17 legal snapshot describing the EU AI Act Digital Omnibus amendments and the Austrian NISG transition;
-- publication-contract tests for official-source provenance, future-effective Annex III timing and the local Gemma 4 Ollama baseline.
+- publication-contract tests for official-source provenance, future-effective Annex III timing and the local Gemma 4 Ollama baseline;
+- an IEEE Access paper-results reporting manifest under `results/paper-2026/`, kept separate from the historical synthetic `research-v1` reference run.
 
 ### Changed
 
 - incorporated Regulation (EU) 2026/1744 into the legal-source registry and corrected Article 6(2)/Annex III high-risk benchmark timing to the amended 2 December 2027 application date;
 - updated Article 4 AI-literacy summaries to the amended requirement to support development of AI literacy rather than imply a guaranteed individual level;
-- changed the actual local Ollama publication baseline from `gemma3n:e2b` to `gemma4:e2b` while keeping `http://host.docker.internal:11434` as the Docker-to-host endpoint;
+- changed the actual Ollama publication baseline from the earlier edge-model configuration to `gemma4:31b-cloud` while keeping `http://host.docker.internal:11434` as the Docker-to-host endpoint;
+- aligned publication documentation with the IEEE Access manuscript and explicitly separated the paper-reported aggregate metrics from the older synthetic reference run;
 - strengthened the blind two-annotator, pre-adjudication Cohen's-kappa and adjudication protocol documentation;
 - separated current GDPR automated-decision cases from future-effective AI Act Annex III deployer obligations.
 
+### Fixed
+
+- corrected `CITATION.cff` so Vahid Tavakkoli, Kabeh Mohsenzadegan and Kyandoghere Kyamakya are represented as three separate authors with separate e-mail addresses.
+
 ### Planned
 
-- complete two genuinely independent annotator reviews and adjudication of the EU/Austria validation set;
 - OIDC/workload identity, PostgreSQL, tenant isolation and signed policy approval workflow.
 
 ## [0.4.0] - 2026-08-17
