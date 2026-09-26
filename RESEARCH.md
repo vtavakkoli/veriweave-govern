@@ -25,9 +25,14 @@ proxy as an LLM baseline. Real LLM evaluation is intentionally isolated in the
 EU/Austria publication-validation layer, where the configured Ollama model is
 actually invoked through `/api/chat`.
 
-The committed `results/research-v1/` reference run predates this change and is
-synthetic/oracle-labelled. It demonstrates reproducibility and controlled
+The committed `results/research-v1/` reference run is a distinct earlier
+synthetic/oracle-labelled run. It demonstrates reproducibility and controlled
 component evaluation; it is not evidence of real-world regulatory effectiveness.
+The aggregate values reported in the IEEE Access submission are frozen
+separately in `results/paper-2026/paper-results.json`. In particular, the paper
+uses a later held-out calibration profile (AUROC 0.9840, AUPRC 0.9896, Brier
+0.1226, ECE 0.2253, threshold 0.7600), so the historical `research-v1`
+calibration values should not be treated as Table 8 of the paper.
 
 ### EU/Austria publication validation
 
@@ -92,8 +97,10 @@ For a larger load study, for example approximately 100,000 service requests:
 LOAD_MATRIX_REQUESTS_PER_LEVEL=25000 make publication-load
 ```
 
-Publication results remain explicitly provisional until **two genuinely
-independent blind annotation sheets** and all adjudicated labels are complete.
+Freshly generated publication results remain explicitly provisional until
+**two genuinely independent blind annotation sheets** and any required
+adjudication are complete. The completed aggregate results reported in the IEEE
+Access submission are preserved in `results/paper-2026/paper-results.json`.
 The repository does not generate, infer or simulate annotator answers and does
 not report provisional researcher labels as human ground truth.
 
