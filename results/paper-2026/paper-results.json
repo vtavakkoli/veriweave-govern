@@ -1,0 +1,105 @@
+{
+  "artifact": "VeriWeave Govern IEEE Access submission reporting manifest",
+  "version": "0.4.0",
+  "manuscript_title": "VeriWeave Govern: Evidence-Gated Deterministic Runtime Governance for Enterprise AI Agents",
+  "snapshot_date": "2026-09-26",
+  "provenance": "Aggregate values transcribed from the IEEE Access submission manuscript. This reporting manifest does not replace raw experiment outputs. The historical results/research-v1/reference-metrics.json file is a distinct earlier synthetic reference run.",
+  "governbench": {
+    "configuration": {
+      "seeds": 30,
+      "cases_per_seed": 2000,
+      "total_cases": 60000,
+      "synthetic": true
+    },
+    "methods": {
+      "rbac": {
+        "accuracy": 0.5864,
+        "accuracy_ci95": [0.5845, 0.5883],
+        "macro_f1": 0.6012,
+        "false_allow_rate": 0.3032,
+        "gasr": 0.7142
+      },
+      "abac": {
+        "accuracy": 0.4947,
+        "accuracy_ci95": [0.4945, 0.4948],
+        "macro_f1": 0.5468,
+        "false_allow_rate": 0.5053,
+        "gasr": 0.8569
+      },
+      "veriweave": {
+        "accuracy": 0.9888,
+        "accuracy_ci95": [0.9876, 0.9899],
+        "macro_f1": 0.9836,
+        "false_allow_rate": 0.0,
+        "gasr": 0.0
+      }
+    },
+    "calibration": {
+      "auroc": 0.9840,
+      "auprc": 0.9896,
+      "brier_score": 0.1226,
+      "expected_calibration_error": 0.2253,
+      "selected_threshold": 0.7600
+    },
+    "ablations": {
+      "evidence_gate_removed": {"accuracy": 0.7127, "false_allow_rate": 0.2873, "gasr": 0.5715},
+      "contradiction_check_removed": {"accuracy": 0.9880, "false_allow_rate": 0.0008, "gasr": 0.0067},
+      "human_review_removed": {"accuracy": 0.8998, "false_allow_rate": 0.0890, "gasr": 0.0},
+      "ood_fail_safe_removed": {"accuracy": 0.8604, "false_allow_rate": 0.1284, "gasr": 0.1427},
+      "deny_precedence_removed": {"accuracy": 0.7675, "false_allow_rate": 0.2115, "gasr": 0.0},
+      "temporal_replay_removed": {"accuracy": 0.9155, "false_allow_rate": 0.0665, "gasr": 0.0}
+    }
+  },
+  "service": {
+    "correctness_scenarios_passed": 12,
+    "correctness_scenarios_total": 12,
+    "smoke": {
+      "measured_requests": 110,
+      "concurrency": 4,
+      "mean_latency_ms": 10.42,
+      "p95_latency_ms": 17.14,
+      "p99_latency_ms": 19.93,
+      "throughput_requests_per_second": 371.64,
+      "audit_chain_valid": true
+    },
+    "load_matrix": [
+      {"concurrency": 1, "requests": 10010, "requests_per_second": 320.33, "p95_latency_ms": 3.96, "failures": 0},
+      {"concurrency": 4, "requests": 10010, "requests_per_second": 413.55, "p95_latency_ms": 13.27, "failures": 0},
+      {"concurrency": 16, "requests": 10010, "requests_per_second": 382.72, "p95_latency_ms": 49.81, "failures": 0},
+      {"concurrency": 32, "requests": 10010, "requests_per_second": 368.97, "p95_latency_ms": 108.84, "failures": 0}
+    ]
+  },
+  "regulation_grounded_validation": {
+    "source_snapshot_date": "2026-08-17",
+    "total_cases": 150,
+    "domains": {
+      "public_administration": 50,
+      "enterprise_it_devops": 50,
+      "data_ai_governance": 50
+    },
+    "human_annotation": {
+      "annotators": 2,
+      "completed_pairs": 150,
+      "raw_agreement": 1.0,
+      "cohens_kappa": 1.0,
+      "disagreements": 0,
+      "adjudications": 0,
+      "consensus": {"allow": 80, "review": 20, "deny": 50},
+      "mean_confidence": {"annotator_a": 4.87, "annotator_b": 4.87},
+      "provisional_human_agreement": 0.8,
+      "provisional_human_kappa": 0.7
+    },
+    "comparison": {
+      "rbac": {"accuracy": 0.2400, "macro_f1": 0.2278, "false_allow_rate": 0.0, "false_review_rate": 0.7600},
+      "abac": {"accuracy": 0.4267, "macro_f1": 0.3515, "false_allow_rate": 0.0933, "false_review_rate": 0.4800},
+      "opa": {"accuracy": 0.8000, "macro_f1": 0.7802, "false_allow_rate": 0.0, "false_review_rate": 0.2000},
+      "cedar": {"accuracy": 0.8000, "macro_f1": 0.7802, "false_allow_rate": 0.0, "false_review_rate": 0.2000},
+      "gemma_4_31b": {"accuracy": 0.9733, "macro_f1": 0.9573, "false_allow_rate": 0.0, "false_review_rate": 0.0267},
+      "veriweave": {"accuracy": 0.8000, "macro_f1": 0.7802, "false_allow_rate": 0.0, "false_review_rate": 0.2000}
+    },
+    "ollama": {
+      "requested_model": "gemma4:31b-cloud",
+      "resolved_model": "gemma4:31b"
+    }
+  }
+}
