@@ -15,12 +15,12 @@ abstract: >-
   evidence research, adversarial testing, temporal replay, and counterfactual
   governance certificates.
 authors:
-  - family-names: Tavakkoli
-    given-names: Vahid
-    email: vahid.tavakkoli@aau.at
-  - family-names: Mohsenzadegan
-    given-names: Kabeh
-    email: kabeh.mohsenzadegan@aau.at
-  - family-names: Kyamakya
-    given-names: Kyandoghere
-    email: kyandoghere.kyamakya@aau.at
+ - family-names: Mohsenzadegan
+   given-names: Kabeh
+   email: kabeh.mohsenzadegan@aau.at  
+ - family-names: Tavakkoli
+   given-names: Vahid
+   email: vahid.tavakkoli@aau.at
+ - family-names: Kyamakya
+   given-names: Kyandoghere
+   email: kyandoghere.kyamakya@aau.at
