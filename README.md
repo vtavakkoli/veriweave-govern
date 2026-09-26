@@ -127,8 +127,20 @@ Default configuration is **30 independent seeds × 2,000 cases/seed** across
 public administration, healthcare, financial services, software-engineering
 agents and enterprise-office agents.
 
-The committed synthetic reference run reports VeriWeave accuracy `0.9888` with
-95% CI `[0.9876, 0.9899]`, macro-F1 `0.9836`, and evidence AUROC `0.9836`.
+The historical committed synthetic reference run in
+[`results/research-v1/reference-metrics.json`](results/research-v1/reference-metrics.json)
+reports VeriWeave accuracy `0.9888` with 95% CI `[0.9876, 0.9899]`,
+macro-F1 `0.9836`, and evidence AUROC `0.9836`. It is intentionally retained
+as a distinct earlier synthetic reference run.
+
+The aggregate values reported in the IEEE Access submission are frozen
+separately in
+[`results/paper-2026/paper-results.json`](results/paper-2026/paper-results.json).
+For the paper's held-out evidence profile these are AUROC `0.9840`, AUPRC
+`0.9896`, Brier score `0.1226`, ECE `0.2253`, and selected threshold
+`0.7600`. The paper snapshot and the historical `research-v1` run must not be
+treated as the same experiment.
+
 These are **synthetic/oracle-labelled results**, not evidence of real-world
 compliance effectiveness.
 
@@ -175,14 +187,14 @@ The external publication comparators are:
 | ABAC | deterministic reference baseline |
 | OPA/Rego | real OPA 1.17.0 engine |
 | Cedar | real `cedar-policy-cli` 4.12.0 |
-| Local LLM | real Ollama structured-output call, default `gemma4:e2b` |
+| Local LLM | real Ollama structured-output call, default `gemma4:31b-cloud` |
 | VeriWeave | deterministic governor with separately trained evidence calibrator |
 
 Prepare the local edge model:
 
 ```bash
-ollama pull gemma4:e2b
 ollama list
+ollama run gemma4:31b-cloud
 ```
 
 Then run the publication profile:
@@ -234,10 +246,13 @@ results/
 └── load-matrix.json
 ```
 
-Until the two annotation sheets and adjudication are complete, the publication
-report is visibly marked **DRAFT — HUMAN VALIDATION REQUIRED**. The repository
-does not invent human-study results or silently substitute researcher labels
-for independent human ground truth.
+Fresh publication runs remain visibly marked **DRAFT — HUMAN VALIDATION
+REQUIRED** until their two annotation sheets and any required adjudication are
+complete. The completed aggregate results reported in the IEEE Access submission
+are recorded separately in
+[`results/paper-2026/paper-results.json`](results/paper-2026/paper-results.json).
+The repository does not invent human-study results or silently substitute
+researcher labels for independent human ground truth.
 
 See [`research/validation/README.md`](research/validation/README.md) and
 [`research/policy_baselines/README.md`](research/policy_baselines/README.md).
@@ -325,9 +340,11 @@ and independent security review. See [`SECURITY.md`](SECURITY.md) and
 
 **v0.4.0 is the publication-validation edition.** It is suitable for research,
 demonstrations, controlled pilots, benchmark development, consulting
-assessments and integration work. Real-world regulatory-effectiveness claims
-still require completed independent annotation, adjudication and
-organization-specific validation.
+assessments and integration work. The IEEE Access paper snapshot records a
+completed two-annotator validation of the 150 constructed regulation-grounded
+cases, but this does not establish real-world regulatory effectiveness.
+Organization-specific validation and broader external replication remain
+necessary.
 
 ## Citation and license
 
