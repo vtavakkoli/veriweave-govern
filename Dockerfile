@@ -1,4 +1,4 @@
-FROM python:3.13-slim AS runtime
+FROM python:3.15-slim AS runtime
 
 ARG VERSION=0.4.0
 
