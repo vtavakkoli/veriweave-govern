@@ -10,9 +10,9 @@ from fastapi.staticfiles import StaticFiles
 
 from app import __version__
 from app.audit import AuditLedger
-from app.engine import GovernanceEngine
+from app.engine import GovernanceEngine, ReplayError
 from app.evidence import EvidenceVerifier
-from app.models import EvaluationRequest, EvaluationResponse
+from app.models import EvaluationRequest, EvaluationResponse, ReplayRequest
 from app.policy import PolicyLoadError, PolicyStore
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,9 +20,12 @@ POLICY_DIR = Path(os.getenv("GOVERN_POLICY_DIR", BASE_DIR / "config" / "policies
 AUDIT_PATH = Path(os.getenv("GOVERN_AUDIT_PATH", BASE_DIR / "data" / "audit.jsonl"))
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
-policy_store = PolicyStore(POLICY_DIR)
+SNAPSHOT_DIR = Path(os.getenv("GOVERN_SNAPSHOT_DIR", BASE_DIR / "data" / "policy-snapshots"))
+trust_config = os.getenv("GOVERN_EVIDENCE_TRUST_CONFIG")
+evidence_verifier = EvidenceVerifier.from_config(Path(trust_config)) if trust_config else EvidenceVerifier()
+policy_store = PolicyStore(POLICY_DIR, SNAPSHOT_DIR)
 audit_ledger = AuditLedger(AUDIT_PATH, os.getenv("GOVERN_AUDIT_SIGNING_KEY"))
-engine = GovernanceEngine(policy_store, EvidenceVerifier(), audit_ledger)
+engine = GovernanceEngine(policy_store, evidence_verifier, audit_ledger)
 
 app = FastAPI(
     title="VeriWeave Govern",
@@ -50,6 +53,7 @@ def health() -> dict[str, object]:
         "version": __version__,
         "active_policies": len(policy_store.policies),
         "policy_set_hash": policy_store.policy_set_hash,
+        "evidence_mode": "attested" if trust_config else "demo-metadata",
     }
 
 
@@ -70,6 +74,14 @@ def reload_policies() -> dict[str, object]:
 @app.post("/v1/evaluate", response_model=EvaluationResponse)
 def evaluate(request: EvaluationRequest) -> EvaluationResponse:
     return engine.evaluate(request)
+
+
+@app.post("/v1/replay")
+def replay(request: ReplayRequest) -> dict[str, object]:
+    try:
+        return engine.replay(request.record_id, request.expected_policy_set_hash)
+    except ReplayError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
 
 
 @app.get("/v1/audit")

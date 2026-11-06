@@ -20,6 +20,7 @@ from research.metrics import (
     expected_calibration_error,
     pr_auc,
     roc_auc,
+    safety_metrics,
     summarize_runs,
 )
 
@@ -36,6 +37,7 @@ METRICS = (
     "accuracy",
     "macro_f1",
     "false_allow_rate",
+    "conditional_unsafe_allow_rate",
     "false_deny_rate",
     "false_review_rate",
     "gasr",
@@ -87,6 +89,14 @@ def evaluate_seed(seed: int, case_count: int) -> dict[str, object]:
     temporal = [case for case in test if case.category == "temporal"]
     return {
         "seed": seed,
+        "sample_counts": {"generated": len(cases), "training": len(train), "evaluated": len(test)},
+        "reference_class_counts": {label: truth.count(label) for label in ("allow", "review", "deny")},
+        "safety": {name: safety_metrics(truth, pred) for name, pred in predictions.items()},
+        "case_predictions": [
+            {"seed": seed, "case_id": case.case_id, "reference": case.ground_truth,
+             **{name: predictions[name][i] for name in BASELINES}}
+            for i, case in enumerate(test)
+        ],
         "baselines": baseline_metrics,
         "ablations": ablations,
         "calibration": calibration,
@@ -176,9 +186,10 @@ def render_html(report: dict[str, object]) -> str:
         "<style>body{font:15px system-ui;max-width:1100px;margin:40px auto;padding:0 20px}"
         "table{width:100%;border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd}"
         ".note{padding:14px;background:#fff8e1}</style>"
-        "<h1>GovernBench Scientific Report</h1>"
+        "<h1>GovernBench specification-conformance and fault-injection report</h1>"
         "<p class='note'><b>Scientific boundary:</b> synthetic, oracle-labelled reference "
-        "benchmark; not human-validated real-world effectiveness or legal certification. "
+        "benchmark sharing the governor's intended semantics; not independent evidence of "
+        "real-world effectiveness. RBAC/ABAC lack controls deliberately exercised by these cases. "
         "LLM comparison is intentionally excluded here and executed only in the publication "
         "validation against the configured real Ollama model.</p>"
         "<table><tr><th>Method</th><th>Accuracy mean [95% CI]</th><th>Macro F1</th>"
@@ -209,12 +220,26 @@ def main() -> int:
             "seeds": args.seeds,
             "cases_per_seed": args.cases,
             "synthetic": True,
+            "generated_cases": sum(run["sample_counts"]["generated"] for run in runs),
+            "training_cases": sum(run["sample_counts"]["training"] for run in runs),
+            "evaluated_cases": sum(run["sample_counts"]["evaluated"] for run in runs),
+            "split": "index modulo 5: 0,1 evaluation; 2,3,4 training",
+            "interval_interpretation": (
+                "Aggregate intervals describe seed-to-seed metric variation; a zero-width "
+                "interval for zero observed events is not a deployment risk bound. "
+                "See per-seed safety counts and exact conditional binomial calculations."
+            ),
             "llm_baseline": "excluded; real Ollama baseline runs in publication validation",
         },
         "aggregate": aggregate(runs),
         "scalability": latency_profile(),
-        "runs": runs,
+        "runs": [{key: value for key, value in run.items() if key != "case_predictions"} for run in runs],
     }
+    with (args.output / "case-predictions.csv").open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=("seed", "case_id", "reference", *BASELINES))
+        writer.writeheader()
+        for run in runs:
+            writer.writerows(run["case_predictions"])
     (args.output / "report.json").write_text(
         json.dumps(report, indent=2, sort_keys=True), encoding="utf-8"
     )

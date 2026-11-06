@@ -2,6 +2,20 @@
 
 All notable changes to VeriWeave Govern are documented here. The project follows Semantic Versioning.
 
+## 0.5.0rc1 - reviewer revision (2026-11-06)
+
+- Add authenticated, request-scoped connector attestations and distinguish them
+  from the default demonstration metadata adapter and synthetic research score.
+- Bind every decision to one captured policy bundle and evaluation time; persist
+  historical policy archives and add fail-closed `/v1/replay` semantics.
+- Add direct audit tampering, protected-checkpoint, replay, evidence-admission,
+  concurrent reload and larger rule/evidence implementation experiments.
+- Add conditional unsafe-allow rates and exact binomial uncertainty; expose
+  training/evaluation counts and export raw held-out synthetic predictions.
+- Add annotation disclosure/audit tooling and manuscript-table generation.
+- Preserve original reported aggregates and document corrected sample counts,
+  inconsistent false-review reporting and missing raw human-study records.
+
 ## [Unreleased]
 
 ### Added

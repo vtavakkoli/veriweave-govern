@@ -1,0 +1,10 @@
+# Opt-in authenticated evidence mode. Keep the actual trust file outside git.
+services:
+  govern:
+    environment:
+      GOVERN_EVIDENCE_TRUST_CONFIG: /run/secrets/evidence-trust
+    secrets:
+      - evidence-trust
+secrets:
+  evidence-trust:
+    file: ${GOVERN_EVIDENCE_TRUST_FILE:?Set GOVERN_EVIDENCE_TRUST_FILE to a protected JSON trust configuration}

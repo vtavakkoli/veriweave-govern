@@ -1,0 +1,534 @@
+{
+  "audit_faults": [
+    {
+      "case": "modification",
+      "detected": true,
+      "passed": true,
+      "verification": {
+        "failed_at_line": 2,
+        "reason": "hash chain mismatch",
+        "records": 1,
+        "valid": false
+      }
+    },
+    {
+      "case": "deletion-middle",
+      "detected": true,
+      "passed": true,
+      "verification": {
+        "failed_at_line": 2,
+        "reason": "hash chain mismatch",
+        "records": 1,
+        "valid": false
+      }
+    },
+    {
+      "case": "deletion-tail",
+      "detected": true,
+      "passed": true,
+      "verification": {
+        "head_hash": "2aca1264d6f2166a2f083722834260fc4f28e7d4abd46cae3131bd24026db290",
+        "reason": "checkpoint mismatch",
+        "records": 3,
+        "valid": false
+      }
+    },
+    {
+      "case": "insertion",
+      "detected": true,
+      "passed": true,
+      "verification": {
+        "failed_at_line": 2,
+        "reason": "hash chain mismatch",
+        "records": 1,
+        "valid": false
+      }
+    },
+    {
+      "case": "reordering",
+      "detected": true,
+      "passed": true,
+      "verification": {
+        "failed_at_line": 2,
+        "reason": "hash chain mismatch",
+        "records": 1,
+        "valid": false
+      }
+    },
+    {
+      "case": "policy-hash",
+      "detected": true,
+      "passed": true,
+      "verification": {
+        "failed_at_line": 2,
+        "reason": "hash chain mismatch",
+        "records": 1,
+        "valid": false
+      }
+    },
+    {
+      "case": "invalid-hmac",
+      "detected": true,
+      "passed": true,
+      "verification": {
+        "failed_at_line": 2,
+        "reason": "invalid signature",
+        "records": 1,
+        "valid": false
+      }
+    },
+    {
+      "case": "missing-hmac",
+      "detected": true,
+      "passed": true,
+      "verification": {
+        "failed_at_line": 2,
+        "reason": "invalid signature",
+        "records": 1,
+        "valid": false
+      }
+    },
+    {
+      "case": "malformed-json",
+      "detected": true,
+      "passed": true,
+      "verification": {
+        "failed_at_line": 5,
+        "reason": "malformed audit record",
+        "records": 4,
+        "valid": false
+      }
+    },
+    {
+      "case": "rehash-without-key",
+      "detected": true,
+      "passed": true,
+      "verification": {
+        "failed_at_line": 2,
+        "reason": "invalid signature",
+        "records": 1,
+        "valid": false
+      }
+    },
+    {
+      "case": "restart-truncation-protected-checkpoint",
+      "detected": true,
+      "passed": true,
+      "unanchored_prefix_valid": true
+    }
+  ],
+  "concurrent_snapshot": {
+    "audit": {
+      "head_hash": "1e927bd7f1207ce6494febc8b8e310c377cf2cbd7080f0f14602e01c4eef77fa",
+      "records": 600,
+      "valid": true
+    },
+    "bundle_decision_mismatches": 0,
+    "passed": true,
+    "requests": 600,
+    "workers": 8
+  },
+  "created_at": "2026-11-06T14:51:02.263073+00:00",
+  "environment": {
+    "base_commit": "77cf503e6cfaf35bc9e0dc7f03faa6bc832d02ec",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "processor": "",
+    "python": "3.13.5",
+    "working_tree": "revision sources; use accompanying source checksums"
+  },
+  "evidence_admission": [
+    {
+      "accepted": true,
+      "case": "authenticated-current-scoped-ticket",
+      "expected": true,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "modified-content",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "invalid evidence HMAC"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "modified-source_id",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "untrusted evidence source"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "modified-source_version",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "unapproved source version",
+        "invalid evidence HMAC"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "modified-evidence_type",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "source not authorized for evidence type",
+        "invalid evidence HMAC"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "modified-authority",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "invalid evidence HMAC"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "modified-current",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "source marked non-current",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "invalid evidence HMAC"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "signed-boolean-without-authenticator",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "missing connector attestation (signed flag is insufficient)"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "invalid-mac-64",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "invalid evidence HMAC"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "invalid-mac-9",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "invalid evidence HMAC"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "invalid-mac-9",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "invalid evidence HMAC"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "unknown-signing-key",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "untrusted attestation key"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "expired-authenticated-ticket",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "attestation outside validity window"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "future-issued-ticket",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "attestation outside validity window"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "approval-reused-with-different-context",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "attestation request scope mismatch"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "cross-tenant-approval-reuse",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "attestation request scope mismatch"
+      ]
+    },
+    {
+      "accepted": false,
+      "case": "authenticated-conflict",
+      "expected": false,
+      "passed": true,
+      "reasons": [
+        "authority=95/100",
+        "current source version",
+        "signed evidence",
+        "substantive content",
+        "contains policy reference language",
+        "conflicting evidence requires review"
+      ]
+    }
+  ],
+  "passed": true,
+  "reported_human_bank_zero_event_bound": {
+    "ci95_high": 0.05133379715102374,
+    "ci95_low": 0.0,
+    "confidence_level": 0.95,
+    "estimate": 0.0,
+    "events": 0,
+    "method": "Clopper-Pearson exact binomial",
+    "trials": 70,
+    "upper_one_sided": 0.04189334406688858
+  },
+  "scale": [
+    {
+      "audit_valid": true,
+      "evidence_items": 1,
+      "failures": 0,
+      "mean_ms": 0.24083331001747865,
+      "p95_ms": 0.3776399998969282,
+      "requests": 100,
+      "requests_per_second": 4152.249536940817,
+      "rules": 100
+    },
+    {
+      "audit_valid": true,
+      "evidence_items": 10,
+      "failures": 0,
+      "mean_ms": 0.6390724700031569,
+      "p95_ms": 0.906319000023359,
+      "requests": 100,
+      "requests_per_second": 1564.7677641239345,
+      "rules": 100
+    },
+    {
+      "audit_valid": true,
+      "evidence_items": 100,
+      "failures": 0,
+      "mean_ms": 3.9280797999890638,
+      "p95_ms": 4.640850000214414,
+      "requests": 100,
+      "requests_per_second": 254.5773128139566,
+      "rules": 100
+    },
+    {
+      "audit_valid": true,
+      "evidence_items": 1,
+      "failures": 0,
+      "mean_ms": 0.9438546500132361,
+      "p95_ms": 1.4353790002132882,
+      "requests": 100,
+      "requests_per_second": 1059.4851654181887,
+      "rules": 1000
+    },
+    {
+      "audit_valid": true,
+      "evidence_items": 10,
+      "failures": 0,
+      "mean_ms": 1.783814620002886,
+      "p95_ms": 1.9044969999413297,
+      "requests": 100,
+      "requests_per_second": 560.5963695927003,
+      "rules": 1000
+    },
+    {
+      "audit_valid": true,
+      "evidence_items": 100,
+      "failures": 0,
+      "mean_ms": 4.6998003500220875,
+      "p95_ms": 7.0143359998837695,
+      "requests": 100,
+      "requests_per_second": 212.7749958560049,
+      "rules": 1000
+    },
+    {
+      "audit_valid": true,
+      "evidence_items": 1,
+      "failures": 0,
+      "mean_ms": 13.035355469983188,
+      "p95_ms": 15.834269999686512,
+      "requests": 100,
+      "requests_per_second": 76.71444037738158,
+      "rules": 10000
+    },
+    {
+      "audit_valid": true,
+      "evidence_items": 10,
+      "failures": 0,
+      "mean_ms": 13.731449130000328,
+      "p95_ms": 15.741760000310023,
+      "requests": 100,
+      "requests_per_second": 72.82552558966339,
+      "rules": 10000
+    },
+    {
+      "audit_valid": true,
+      "evidence_items": 100,
+      "failures": 0,
+      "mean_ms": 17.013330690001567,
+      "p95_ms": 20.824228000037692,
+      "requests": 100,
+      "requests_per_second": 58.777438599232205,
+      "rules": 10000
+    }
+  ],
+  "schema": "veriweave-reviewer-validation/v1",
+  "scope": "Researcher-authored implementation fault tests, not independent human validation. Scale uses one process, sequential calls, in-process engine plus JSONL append, 100-10000 rules and 1-100 evidence items. No HTTP, tool execution, distributed storage, legal correctness or enterprise deployment claim.",
+  "source_sha256": {
+    "app/__init__.py": "93cfe69ae51d6209422f38afb08145a3f899c778272f153e4a0c77ea9b65379e",
+    "app/audit.py": "423c6c7d71fb34c2ed6cf8fa06d17628dd4beec1ebb4cd129ec2b51f726d6876",
+    "app/engine.py": "cf3bb140e4ab58511d5145146a9cbce1f2469c8b0f3961da084c755aa5772672",
+    "app/evidence.py": "527e067a7447071899a4553184c7c0d1074ba1ea8c0fe783dc5dd9dbc215a09d",
+    "app/main.py": "870abc5ad109bc41083c17214804c6bee94938c0897eab4285c263020b37f083",
+    "app/models.py": "15e2a5e741801c19cc978d5e897babfaa4d6444c2e6587959e70a85f87cb9763",
+    "app/policy.py": "e7e9c3f764122e4cf0f13b59ff9f999d0c7ee27805adf6ec3858e777e0959f8c",
+    "research/metrics.py": "30dcbca03306f7095038c31fc438f55191447d1289a1778992f2c57ff5a0d148",
+    "research/revision_validation.py": "5f960e68387ce7e726aa3f72dc68ce108bb55ec285224a8c90a49d31ea396312"
+  },
+  "temporal_replay": [
+    {
+      "case": "live-review-historical-allow",
+      "historical": "allow",
+      "live": "review",
+      "passed": true
+    },
+    {
+      "case": "live-deny-historical-allow",
+      "historical": "allow",
+      "live": "deny",
+      "passed": true
+    },
+    {
+      "case": "historical-replay-after-restart",
+      "passed": true
+    },
+    {
+      "case": "incorrect-policy-version",
+      "passed": true,
+      "reason": "incorrect historical policy version requested"
+    },
+    {
+      "case": "missing-historical-policy",
+      "passed": true,
+      "reason": "historical policy unavailable or corrupt: [Errno 2] No such file or directory: '/tmp/veriweave-revision-9kxgqpew/snapshots/596dc4d36b3e3ac900e51e09fedec6d12b7ef71a02d65110c9fa2ab512f815ea.json'"
+    },
+    {
+      "case": "corrupt-historical-policy",
+      "passed": true,
+      "reason": "historical policy unavailable or corrupt: policy content hash mismatch"
+    },
+    {
+      "case": "historical-verifier-unavailable",
+      "passed": true,
+      "reason": "historical evidence verifier/configuration unavailable"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 # VeriWeave Govern
 
-**Deterministic runtime governance, calibrated evidence validation, human-review routing, tamper-evident audit, and reproducible scientific evaluation for enterprise AI agents.**
+**Deterministic authorization with typed evidence admission, human-review routing, historical replay and authenticated audit records.**
 
 [![CI](https://github.com/vtavakkoli/veriweave-govern/actions/workflows/ci.yml/badge.svg)](https://github.com/vtavakkoli/veriweave-govern/actions/workflows/ci.yml)
 [![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/)
@@ -28,21 +28,9 @@ organizational policies, validates required evidence, applies deterministic
 precedence, routes accountable human review and records a tamper-evident audit
 envelope.
 
-```text
-Agent / workflow / API gateway
-              |
-              v
-      VeriWeave Govern
-      - match versioned rules
-      - validate evidence
-      - deny > review > allow
-      - route human oversight
-      - record audit evidence
-              |
-       +------+------+
-       |      |      |
-     allow  review  deny
-```
+The trusted tool router submits an agent's proposed action and executes it only
+after a live allow. Review goes to an accountable workflow queue; deny blocks
+execution. See the [integration contract](docs/INTEGRATION.md).
 
 The final authorization path does **not require an LLM**. LLMs may assist with
 policy drafting, candidate evidence retrieval, document classification or
@@ -95,6 +83,7 @@ make test
 | `GET` | `/v1/policies` | Active policy metadata and hashes |
 | `POST` | `/v1/policies/reload` | Reload active bundles |
 | `POST` | `/v1/evaluate` | Evaluate an agent action |
+| `POST` | `/v1/replay` | Reproduce a historical decision; never authorizes execution |
 | `GET` | `/v1/audit` | Read recent audit records |
 | `GET` | `/v1/audit/verify` | Verify the audit chain |
 
@@ -115,17 +104,21 @@ Outputs include `results/benchmark-report.html` and
 
 ### 2. GovernBench scientific evaluation
 
-The synthetic research layer adds independent generated benchmark realizations,
-learned evidence calibration, adversarial attacks, temporal policy evolution,
+The synthetic layer tests specification conformance and fault injection using
+generated realizations, learned evidence scores, adversarial inputs, temporal policy evolution,
 baselines, ablations, confidence intervals and counterfactual certificates.
 
 ```bash
 make research
 ```
 
-Default configuration is **30 independent seeds × 2,000 cases/seed** across
+Default configuration is **30 seeds × 2,000 generated cases/seed** across
 public administration, healthcare, financial services, software-engineering
-agents and enterprise-office agents.
+agents and enterprise-office agents. The deterministic 60/40 split gives
+**36,000 training cases and 24,000 held-out evaluated cases**. The oracle shares
+the governor's intended semantics; this is an implementation-conformance test.
+The RBAC/ABAC gap is structurally favorable because those baselines omit controls
+deliberately exercised by the cases.
 
 The historical committed synthetic reference run in
 [`results/research-v1/reference-metrics.json`](results/research-v1/reference-metrics.json)
@@ -143,6 +136,12 @@ treated as the same experiment.
 
 These are **synthetic/oracle-labelled results**, not evidence of real-world
 compliance effectiveness.
+
+The [November reviewer revision](docs/REVISION_2026_11.md) supplies raw held-out
+predictions, conditional unsafe-allow rates with exact uncertainty bounds,
+11 audit/checkpoint checks, 7 actual historical-replay checks, 17 authenticated
+evidence fixtures, concurrent reload validation and larger rule/evidence tests.
+Run `make revision-validation` and `python -m research.service_validation`.
 
 ### 3. Publication validation
 
@@ -254,6 +253,14 @@ are recorded separately in
 The repository does not invent human-study results or silently substitute
 researcher labels for independent human ground truth.
 
+The supplied aggregate human-bank results give identical 0.8000 accuracy for
+VeriWeave, OPA and Cedar, compared with 0.9733 for the Gemma advisory comparator.
+This supports a safety-utility discussion and an architectural contribution,
+not superior decision quality over OPA/Cedar. Raw completed study workbooks and
+original frozen predictions still require author verification. The annotators
+were qualified domain experts and remain anonymous as Annotator A and Annotator B;
+see the revision document for reporting corrections and the confidentiality policy.
+
 See [`research/validation/README.md`](research/validation/README.md) and
 [`research/policy_baselines/README.md`](research/policy_baselines/README.md).
 
@@ -271,9 +278,15 @@ contribute to safety.
 
 The evidence model exposes a trust score used by a thresholded acceptance gate.
 Research reports Brier score, Expected Calibration Error, AUROC/AUPRC,
-reliability bins and a generated SVG reliability diagram. The score should not
-be presented as a perfectly calibrated real-world probability without separate
-empirical calibration evidence.
+reliability bins and a generated SVG reliability diagram. The reported synthetic
+profile has **ECE 0.2253**. The score is not a calibrated real-world probability
+and does not establish production document reliability.
+
+The HTTP service uses a separate heuristic demonstration adapter by default.
+Set `GOVERN_EVIDENCE_TRUST_CONFIG` to use source/type/version checks, scoped
+HMAC attestations and validity windows. A caller's `signed=true` is insufficient
+in that mode. See [evidence admission](docs/EVIDENCE_ADMISSION.md) for the trust
+boundary, historical configuration requirements and test-fixture limitations.
 
 ## Counterfactual governance certificates
 
@@ -345,6 +358,13 @@ completed two-annotator validation of the 150 constructed regulation-grounded
 cases, but this does not establish real-world regulatory effectiveness.
 Organization-specific validation and broader external replication remain
 necessary.
+
+## Maintainer
+
+Dr. Vahid Tavakkoli serves as Senior Enterprise Architect at Wien Digital
+(Municipal Department 01, MA 01), City of Vienna, Austria, and is affiliated
+with the University of Klagenfurt. His work includes enterprise architecture
+and AI governance.
 
 ## Citation and license
 

@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VeriWeave Govern Benchmark Report</title>
+<style>
+:root{--bg:#07111f;--panel:#101c2d;--panel2:#0c1726;--line:#263750;--text:#eef6ff;--muted:#91a4bd;--green:#62e6b8;--red:#ff7d8d;--amber:#ffd166;--blue:#78a9ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 85% 0,#18375c 0,#07111f 42%);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,sans-serif}
+main{width:min(1280px,94vw);margin:auto;padding:42px 0 64px}header{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:26px}h1{font-size:clamp(2.3rem,6vw,5rem);letter-spacing:-.06em;line-height:.92;margin:0}h1 span{color:var(--green)}p{color:var(--muted)}.hero-status{padding:11px 18px;border-radius:999px;font-weight:900;border:1px solid var(--line)}.hero-status.pass{color:var(--green);background:#0d2b25}.hero-status.fail{color:var(--red);background:#351823}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}.card,.panel{background:linear-gradient(180deg,#112039ee,#0c1728ee);border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 55px #0005}.card{padding:18px}.card small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.card strong{font-size:1.7rem;display:block;margin-top:4px}.panel{padding:22px;margin-top:18px;overflow:auto}h2{margin:0 0 14px;font-size:1.2rem}h4{margin:0 0 8px}.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:#c9d8ea;background:#0a1524}
+table{width:100%;border-collapse:collapse;min-width:900px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.08em}td small{display:block;color:var(--muted)}.status{font-size:.72rem;font-weight:900;padding:4px 8px;border-radius:999px}.status.pass{color:#05251b;background:var(--green)}.status.fail{color:#2b0710;background:var(--red)}
+.split{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.bar-row{display:grid;grid-template-columns:70px 1fr 42px;gap:10px;align-items:center;margin:11px 0}.bar{height:10px;background:#07101d;border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:inherit}details{border-top:1px solid var(--line);padding:13px 0}summary{cursor:pointer;font-weight:750}.code-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}pre{background:#06101d;border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;color:#c9d8ea;font-size:.78rem;max-height:430px}code{color:#bdd2ec;word-break:break-all}.good{color:var(--green)}.bad{color:var(--red)}footer{color:var(--muted);margin-top:22px;font-size:.82rem}@media(max-width:900px){header{align-items:start;flex-direction:column}.grid{grid-template-columns:1fr 1fr}.split,.code-grid{grid-template-columns:1fr}}@media(max-width:540px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body><main>
+<header><div><h1>VeriWeave <span>Govern</span></h1><p>End-to-end governance correctness, evidence, audit-integrity, and performance benchmark.</p></div><div class="hero-status pass">PASSED</div></header>
+<div class="chips"><span class='chip'>allow</span><span class='chip'>api-validation</span><span class='chip'>decision-precedence</span><span class='chip'>deny</span><span class='chip'>evidence-gate</span><span class='chip'>evidence-quality</span><span class='chip'>fail-safe</span><span class='chip'>human-oversight</span><span class='chip'>production-change</span></div>
+<section class="grid">
+<div class="card"><small>Scenario accuracy</small><strong>12/12</strong></div>
+<div class="card"><small>Benchmark requests</small><strong>110</strong></div>
+<div class="card"><small>P95 latency</small><strong>6.57 ms</strong></div>
+<div class="card"><small>Throughput</small><strong>921.4 req/s</strong></div>
+</section>
+<section class="split">
+<div class="panel"><h2>Run configuration</h2><p>Generated <strong>2026-11-06T14:51:03.659639+00:00</strong></p><p>Target <code>http://127.0.0.1:48843</code></p><p>Policy set <code>60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22</code></p><p>Iterations per scenario: <strong>10</strong> · concurrency: <strong>4</strong></p></div>
+<div class="panel"><h2>Decision distribution</h2><div class='bar-row'><span>allow</span><div class='bar'><i style='width:9.1%'></i></div><strong>10</strong></div><div class='bar-row'><span>deny</span><div class='bar'><i style='width:18.2%'></i></div><strong>20</strong></div><div class='bar-row'><span>review</span><div class='bar'><i style='width:72.7%'></i></div><strong>80</strong></div></div>
+</section>
+<section class="panel"><h2>Correctness scenarios</h2><table><thead><tr><th>Status</th><th>Scenario</th><th>Category</th><th>Expected</th><th>Actual</th><th>Matched rules</th><th>Latency</th><th>Errors</th></tr></thead><tbody><tr><td><span class='status pass'>PASS</span></td><td><strong>Low-risk read with trusted policy evidence</strong><small>low-risk-read-allowed</small></td><td>allow</td><td>allow</td><td>allow</td><td>allow-low-risk-read</td><td>2.20 ms</td><td>—</td></tr><tr><td><span class='status pass'>PASS</span></td><td><strong>Low-risk read without required evidence</strong><small>low-risk-read-missing-evidence</small></td><td>evidence-gate</td><td>review</td><td>review</td><td>allow-low-risk-read</td><td>1.45 ms</td><td>—</td></tr><tr><td><span class='status pass'>PASS</span></td><td><strong>Outdated evidence is rejected</strong><small>low-risk-read-outdated-evidence</small></td><td>evidence-quality</td><td>review</td><td>review</td><td>allow-low-risk-read</td><td>1.40 ms</td><td>—</td></tr><tr><td><span class='status pass'>PASS</span></td><td><strong>Secret data exfiltration is denied</strong><small>secret-exfiltration-denied</small></td><td>deny</td><td>deny</td><td>deny</td><td>prohibit-secret-exfiltration</td><td>1.31 ms</td><td>—</td></tr><tr><td><span class='status pass'>PASS</span></td><td><strong>Deny takes precedence over review</strong><small>deny-overrides-review</small></td><td>decision-precedence</td><td>deny</td><td>deny</td><td>high-impact-human-review, prohibit-secret-exfiltration</td><td>1.30 ms</td><td>—</td></tr><tr><td><span class='status pass'>PASS</span></td><td><strong>High-impact action with complete evidence</strong><small>high-impact-complete-review</small></td><td>human-oversight</td><td>review</td><td>review</td><td>high-impact-human-review</td><td>1.09 ms</td><td>—</td></tr><tr><td><span class='status pass'>PASS</span></td><td><strong>High-impact action missing risk assessment</strong><small>high-impact-missing-risk</small></td><td>human-oversight</td><td>review</td><td>review</td><td>high-impact-human-review</td><td>1.05 ms</td><td>—</td></tr><tr><td><span class='status pass'>PASS</span></td><td><strong>Production deployment with change controls</strong><small>production-deploy-complete</small></td><td>production-change</td><td>review</td><td>review</td><td>production-agent-change</td><td>1.12 ms</td><td>—</td></tr><tr><td><span class='status pass'>PASS</span></td><td><strong>Production deletion without rollback plan</strong><small>production-delete-missing-rollback</small></td><td>production-change</td><td>review</td><td>review</td><td>production-agent-change</td><td>1.18 ms</td><td>—</td></tr><tr><td><span class='status pass'>PASS</span></td><td><strong>Unknown action uses fail-safe review</strong><small>unmatched-action-failsafe</small></td><td>fail-safe</td><td>review</td><td>review</td><td>—</td><td>1.29 ms</td><td>—</td></tr><tr><td><span class='status pass'>PASS</span></td><td><strong>Unclassified external sending is reviewed</strong><small>public-external-send-failsafe</small></td><td>fail-safe</td><td>review</td><td>review</td><td>—</td><td>1.18 ms</td><td>—</td></tr><tr><td><span class='status pass'>PASS</span></td><td><strong>Invalid API request is rejected</strong><small>invalid-request-validation</small></td><td>api-validation</td><td>422</td><td>422</td><td>—</td><td>0.90 ms</td><td>—</td></tr></tbody></table></section>
+<section class="panel"><h2>Performance by scenario</h2><table><thead><tr><th>Scenario</th><th>Requests</th><th>Mean ms</th><th>Median ms</th><th>P95 ms</th><th>Max ms</th></tr></thead><tbody><tr><td>Low-risk read with trusted policy evidence</td><td>10</td><td>4.128</td><td>4.043</td><td>5.329</td><td>5.664</td></tr><tr><td>Low-risk read without required evidence</td><td>10</td><td>3.386</td><td>3.363</td><td>3.783</td><td>3.887</td></tr><tr><td>Outdated evidence is rejected</td><td>10</td><td>5.071</td><td>4.869</td><td>8.050</td><td>9.431</td></tr><tr><td>Secret data exfiltration is denied</td><td>10</td><td>5.081</td><td>3.688</td><td>9.329</td><td>9.340</td></tr><tr><td>Deny takes precedence over review</td><td>10</td><td>4.501</td><td>4.519</td><td>5.699</td><td>6.097</td></tr><tr><td>High-impact action with complete evidence</td><td>10</td><td>4.352</td><td>4.192</td><td>5.917</td><td>6.397</td></tr><tr><td>High-impact action missing risk assessment</td><td>10</td><td>3.776</td><td>3.663</td><td>5.220</td><td>5.433</td></tr><tr><td>Production deployment with change controls</td><td>10</td><td>4.364</td><td>3.788</td><td>6.367</td><td>6.706</td></tr><tr><td>Production deletion without rollback plan</td><td>10</td><td>4.554</td><td>4.128</td><td>6.441</td><td>7.079</td></tr><tr><td>Unknown action uses fail-safe review</td><td>10</td><td>3.621</td><td>3.674</td><td>4.709</td><td>5.113</td></tr><tr><td>Unclassified external sending is reviewed</td><td>10</td><td>3.163</td><td>3.019</td><td>3.796</td><td>4.066</td></tr></tbody></table></section>
+<section class="panel"><h2>Audit integrity</h2><p class="good"><strong>Valid</strong> · records: 121 · head hash: <code>744b0212ff16d8c3a702868337f934303e23945a6558421b4c4ed081a7ca3c60</code></p></section>
+<section class="panel"><h2>Scenario evidence</h2><details><summary>Low-risk read with trusted policy evidence</summary><p>A read-only summarization request should be allowed when a current, signed policy reference is supplied.</p><div class='code-grid'><div><h4>Request</h4><pre>{
+  &quot;action&quot;: &quot;summarize&quot;,
+  &quot;agent_id&quot;: &quot;knowledge-assistant&quot;,
+  &quot;context&quot;: {
+    &quot;data_classification&quot;: &quot;internal&quot;,
+    &quot;environment&quot;: &quot;test&quot;,
+    &quot;impact&quot;: &quot;low&quot;
+  },
+  &quot;evidence&quot;: [
+    {
+      &quot;authority&quot;: 95,
+      &quot;content&quot;: &quot;Policy section 4 permits read-only summarization when the action is logged and uses approved internal information.&quot;,
+      &quot;current&quot;: true,
+      &quot;evidence_id&quot;: &quot;allow-policy-001&quot;,
+      &quot;evidence_type&quot;: &quot;policy_reference&quot;,
+      &quot;signed&quot;: true,
+      &quot;source_id&quot;: &quot;approved-policy-library&quot;,
+      &quot;source_version&quot;: &quot;2026.1&quot;
+    }
+  ],
+  &quot;purpose&quot;: &quot;Create an internal summary&quot;,
+  &quot;resource&quot;: &quot;internal-policy-library&quot;
+}</pre></div><div><h4>Response</h4><pre>{
+  &quot;audit&quot;: {
+    &quot;created_at&quot;: &quot;2026-11-06T14:51:03.513117Z&quot;,
+    &quot;previous_hash&quot;: &quot;0000000000000000000000000000000000000000000000000000000000000000&quot;,
+    &quot;record_hash&quot;: &quot;33457fc53225eba2680dd6b66907ae649fc53476072824b2ea2367636ebc3990&quot;,
+    &quot;record_id&quot;: &quot;6e909689-259f-446b-9771-0e0f19b392aa&quot;,
+    &quot;signature&quot;: &quot;721bc9daefb1673add6e253cdff1a7c6a8647df273329aaee7ba5649db22c6ac&quot;
+  },
+  &quot;created_at&quot;: &quot;2026-11-06T14:51:03.513358Z&quot;,
+  &quot;decision&quot;: &quot;allow&quot;,
+  &quot;evaluated_at&quot;: &quot;2026-11-06T14:51:03.512757Z&quot;,
+  &quot;evidence_assessments&quot;: [
+    {
+      &quot;accepted&quot;: true,
+      &quot;evidence_id&quot;: &quot;allow-policy-001&quot;,
+      &quot;reasons&quot;: [
+        &quot;authority=95/100&quot;,
+        &quot;current source version&quot;,
+        &quot;signed evidence&quot;,
+        &quot;substantive content&quot;,
+        &quot;contains policy reference language&quot;,
+        &quot;demo metadata adapter; authenticity not established&quot;
+      ],
+      &quot;score&quot;: 0.9825
+    }
+  ],
+  &quot;evidence_verifier_id&quot;: &quot;db4a74a797bee6cc27027298c7a2010cc24e42f2fc382197cd4b20499db9c79d&quot;,
+  &quot;matched_rules&quot;: [
+    {
+      &quot;decision&quot;: &quot;allow&quot;,
+      &quot;matched&quot;: true,
+      &quot;missing_evidence&quot;: [],
+      &quot;policy_id&quot;: &quot;enterprise-ai-governance&quot;,
+      &quot;policy_version&quot;: &quot;1.0.0&quot;,
+      &quot;reasons&quot;: [
+        &quot;Low-risk read-only action is permitted by the active governance baseline.&quot;
+      ],
+      &quot;review_queue&quot;: null,
+      &quot;rule_id&quot;: &quot;allow-low-risk-read&quot;
+    }
+  ],
+  &quot;policy_set_hash&quot;: &quot;60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22&quot;,
+  &quot;reasons&quot;: [
+    &quot;Low-risk read-only action is permitted by the active governance baseline.&quot;
+  ],
+  &quot;request_id&quot;: &quot;daf758b9-5428-453a-9f52-1241a7a617f3&quot;,
+  &quot;review_queue&quot;: null
+}</pre></div></div></details><details><summary>Low-risk read without required evidence</summary><p>An otherwise allowable action must be escalated when its required policy reference is absent.</p><div class='code-grid'><div><h4>Request</h4><pre>{
+  &quot;action&quot;: &quot;search&quot;,
+  &quot;agent_id&quot;: &quot;knowledge-assistant&quot;,
+  &quot;context&quot;: {
+    &quot;environment&quot;: &quot;test&quot;,
+    &quot;impact&quot;: &quot;minimal&quot;
+  },
+  &quot;evidence&quot;: [],
+  &quot;resource&quot;: &quot;internal-policy-library&quot;
+}</pre></div><div><h4>Response</h4><pre>{
+  &quot;audit&quot;: {
+    &quot;created_at&quot;: &quot;2026-11-06T14:51:03.514779Z&quot;,
+    &quot;previous_hash&quot;: &quot;33457fc53225eba2680dd6b66907ae649fc53476072824b2ea2367636ebc3990&quot;,
+    &quot;record_hash&quot;: &quot;706842c46192a8268099163199fe337963eb333ba93101fb4b12af9da44ffbed&quot;,
+    &quot;record_id&quot;: &quot;ff976d6a-2035-4597-a596-f7daf76632ef&quot;,
+    &quot;signature&quot;: &quot;4e747421f9547dd610abf95dd572f8c5307c95c2209802729886b62c847fdd58&quot;
+  },
+  &quot;created_at&quot;: &quot;2026-11-06T14:51:03.514931Z&quot;,
+  &quot;decision&quot;: &quot;review&quot;,
+  &quot;evaluated_at&quot;: &quot;2026-11-06T14:51:03.514663Z&quot;,
+  &quot;evidence_assessments&quot;: [],
+  &quot;evidence_verifier_id&quot;: &quot;db4a74a797bee6cc27027298c7a2010cc24e42f2fc382197cd4b20499db9c79d&quot;,
+  &quot;matched_rules&quot;: [
+    {
+      &quot;decision&quot;: &quot;review&quot;,
+      &quot;matched&quot;: true,
+      &quot;missing_evidence&quot;: [
+        &quot;policy_reference&quot;
+      ],
+      &quot;policy_id&quot;: &quot;enterprise-ai-governance&quot;,
+      &quot;policy_version&quot;: &quot;1.0.0&quot;,
+      &quot;reasons&quot;: [
+        &quot;Low-risk read-only action is permitted by the active governance baseline.&quot;,
+        &quot;Missing required evidence: policy_reference&quot;
+      ],
+      &quot;review_queue&quot;: null,
+      &quot;rule_id&quot;: &quot;allow-low-risk-read&quot;
+    }
+  ],
+  &quot;policy_set_hash&quot;: &quot;60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22&quot;,
+  &quot;reasons&quot;: [
+    &quot;Low-risk read-only action is permitted by the active governance baseline.&quot;,
+    &quot;Missing required evidence: policy_reference&quot;
+  ],
+  &quot;request_id&quot;: &quot;7491c2b9-b897-4be2-9ca2-ac58452a23db&quot;,
+  &quot;review_queue&quot;: &quot;governance-default&quot;
+}</pre></div></div></details><details><summary>Outdated evidence is rejected</summary><p>A non-current and unsigned source must not satisfy an allow rule.</p><div class='code-grid'><div><h4>Request</h4><pre>{
+  &quot;action&quot;: &quot;read&quot;,
+  &quot;agent_id&quot;: &quot;knowledge-assistant&quot;,
+  &quot;context&quot;: {
+    &quot;environment&quot;: &quot;test&quot;,
+    &quot;impact&quot;: &quot;low&quot;
+  },
+  &quot;evidence&quot;: [
+    {
+      &quot;authority&quot;: 20,
+      &quot;content&quot;: &quot;Old note&quot;,
+      &quot;current&quot;: false,
+      &quot;evidence_id&quot;: &quot;legacy-policy-001&quot;,
+      &quot;evidence_type&quot;: &quot;policy_reference&quot;,
+      &quot;signed&quot;: false,
+      &quot;source_id&quot;: &quot;legacy-wiki&quot;,
+      &quot;source_version&quot;: &quot;2019.4&quot;
+    }
+  ],
+  &quot;resource&quot;: &quot;legacy-manual&quot;
+}</pre></div><div><h4>Response</h4><pre>{
+  &quot;audit&quot;: {
+    &quot;created_at&quot;: &quot;2026-11-06T14:51:03.516132Z&quot;,
+    &quot;previous_hash&quot;: &quot;706842c46192a8268099163199fe337963eb333ba93101fb4b12af9da44ffbed&quot;,
+    &quot;record_hash&quot;: &quot;29124135934f46706b20b188cfe1ab233f48dc1781036c29e830e1916f179d84&quot;,
+    &quot;record_id&quot;: &quot;fd3bb64e-59e8-4fd7-9831-312298bacb2c&quot;,
+    &quot;signature&quot;: &quot;10b05af14dc3d09ea9eec358c3fabf656b61dcbfe3753c14c419ae141fdb3b8e&quot;
+  },
+  &quot;created_at&quot;: &quot;2026-11-06T14:51:03.516315Z&quot;,
+  &quot;decision&quot;: &quot;review&quot;,
+  &quot;evaluated_at&quot;: &quot;2026-11-06T14:51:03.516000Z&quot;,
+  &quot;evidence_assessments&quot;: [
+    {
+      &quot;accepted&quot;: false,
+      &quot;evidence_id&quot;: &quot;legacy-policy-001&quot;,
+      &quot;reasons&quot;: [
+        &quot;authority=20/100&quot;,
+        &quot;source marked non-current&quot;,
+        &quot;unsigned evidence&quot;,
+        &quot;content too short&quot;,
+        &quot;demo metadata adapter; authenticity not established&quot;
+      ],
+      &quot;score&quot;: 0.12
+    }
+  ],
+  &quot;evidence_verifier_id&quot;: &quot;db4a74a797bee6cc27027298c7a2010cc24e42f2fc382197cd4b20499db9c79d&quot;,
+  &quot;matched_rules&quot;: [
+    {
+      &quot;decision&quot;: &quot;review&quot;,
+      &quot;matched&quot;: true,
+      &quot;missing_evidence&quot;: [
+        &quot;policy_reference&quot;
+      ],
+      &quot;policy_id&quot;: &quot;enterprise-ai-governance&quot;,
+      &quot;policy_version&quot;: &quot;1.0.0&quot;,
+      &quot;reasons&quot;: [
+        &quot;Low-risk read-only action is permitted by the active governance baseline.&quot;,
+        &quot;Evidence below trust threshold: policy_reference&quot;
+      ],
+      &quot;review_queue&quot;: null,
+      &quot;rule_id&quot;: &quot;allow-low-risk-read&quot;
+    }
+  ],
+  &quot;policy_set_hash&quot;: &quot;60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22&quot;,
+  &quot;reasons&quot;: [
+    &quot;Low-risk read-only action is permitted by the active governance baseline.&quot;,
+    &quot;Evidence below trust threshold: policy_reference&quot;
+  ],
+  &quot;request_id&quot;: &quot;52fd85c2-5105-4b06-a594-6aac6a5f0f81&quot;,
+  &quot;review_queue&quot;: &quot;governance-default&quot;
+}</pre></div></div></details><details><summary>Secret data exfiltration is denied</summary><p>An agent attempting to send secret information outside the organization must be denied.</p><div class='code-grid'><div><h4>Request</h4><pre>{
+  &quot;action&quot;: &quot;send_external&quot;,
+  &quot;agent_id&quot;: &quot;export-agent&quot;,
+  &quot;context&quot;: {
+    &quot;data_classification&quot;: &quot;secret&quot;,
+    &quot;environment&quot;: &quot;production&quot;,
+    &quot;impact&quot;: &quot;medium&quot;
+  },
+  &quot;evidence&quot;: [],
+  &quot;purpose&quot;: &quot;Send data to an external mailbox&quot;,
+  &quot;resource&quot;: &quot;citizen-records&quot;
+}</pre></div><div><h4>Response</h4><pre>{
+  &quot;audit&quot;: {
+    &quot;created_at&quot;: &quot;2026-11-06T14:51:03.517544Z&quot;,
+    &quot;previous_hash&quot;: &quot;29124135934f46706b20b188cfe1ab233f48dc1781036c29e830e1916f179d84&quot;,
+    &quot;record_hash&quot;: &quot;76aa69ce25f6dbb42b3846f6b683bdd4d6bac4fe817168d0bea3c7b4007d022e&quot;,
+    &quot;record_id&quot;: &quot;5a2a7767-a207-4754-8891-d66d52b6d193&quot;,
+    &quot;signature&quot;: &quot;228987cba2a545bea51ddd355a4d5cd9ab2be0b84a336ce32ccc0e38b316906a&quot;
+  },
+  &quot;created_at&quot;: &quot;2026-11-06T14:51:03.517694Z&quot;,
+  &quot;decision&quot;: &quot;deny&quot;,
+  &quot;evaluated_at&quot;: &quot;2026-11-06T14:51:03.517464Z&quot;,
+  &quot;evidence_assessments&quot;: [],
+  &quot;evidence_verifier_id&quot;: &quot;db4a74a797bee6cc27027298c7a2010cc24e42f2fc382197cd4b20499db9c79d&quot;,
+  &quot;matched_rules&quot;: [
+    {
+      &quot;decision&quot;: &quot;deny&quot;,
+      &quot;matched&quot;: true,
+      &quot;missing_evidence&quot;: [],
+      &quot;policy_id&quot;: &quot;enterprise-ai-governance&quot;,
+      &quot;policy_version&quot;: &quot;1.0.0&quot;,
+      &quot;reasons&quot;: [
+        &quot;External transfer of protected information is prohibited.&quot;
+      ],
+      &quot;review_queue&quot;: &quot;security-incident&quot;,
+      &quot;rule_id&quot;: &quot;prohibit-secret-exfiltration&quot;
+    }
+  ],
+  &quot;policy_set_hash&quot;: &quot;60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22&quot;,
+  &quot;reasons&quot;: [
+    &quot;External transfer of protected information is prohibited.&quot;
+  ],
+  &quot;request_id&quot;: &quot;93387f25-d847-4217-b635-b748a9412298&quot;,
+  &quot;review_queue&quot;: &quot;security-incident&quot;
+}</pre></div></div></details><details><summary>Deny takes precedence over review</summary><p>A high-impact request with complete evidence is still denied when it also attempts protected-data exfiltration.</p><div class='code-grid'><div><h4>Request</h4><pre>{
+  &quot;action&quot;: &quot;upload_external&quot;,
+  &quot;agent_id&quot;: &quot;executive-agent&quot;,
+  &quot;context&quot;: {
+    &quot;data_classification&quot;: &quot;restricted&quot;,
+    &quot;environment&quot;: &quot;production&quot;,
+    &quot;impact&quot;: &quot;critical&quot;
+  },
+  &quot;evidence&quot;: [
+    {
+      &quot;authority&quot;: 90,
+      &quot;content&quot;: &quot;Policy requirement: the business owner documented the operational need and accountable sponsor for this action.&quot;,
+      &quot;current&quot;: true,
+      &quot;evidence_id&quot;: &quot;business-001&quot;,
+      &quot;evidence_type&quot;: &quot;business_justification&quot;,
+      &quot;signed&quot;: true,
+      &quot;source_id&quot;: &quot;case-management&quot;,
+      &quot;source_version&quot;: &quot;2026.7&quot;
+    },
+    {
+      &quot;authority&quot;: 95,
+      &quot;content&quot;: &quot;Control assessment documents confidentiality, integrity, availability, human oversight, and residual risk requirements.&quot;,
+      &quot;current&quot;: true,
+      &quot;evidence_id&quot;: &quot;risk-001&quot;,
+      &quot;evidence_type&quot;: &quot;risk_assessment&quot;,
+      &quot;signed&quot;: true,
+      &quot;source_id&quot;: &quot;risk-register&quot;,
+      &quot;source_version&quot;: &quot;2026.7&quot;
+    }
+  ],
+  &quot;resource&quot;: &quot;restricted-risk-register&quot;
+}</pre></div><div><h4>Response</h4><pre>{
+  &quot;audit&quot;: {
+    &quot;created_at&quot;: &quot;2026-11-06T14:51:03.518945Z&quot;,
+    &quot;previous_hash&quot;: &quot;76aa69ce25f6dbb42b3846f6b683bdd4d6bac4fe817168d0bea3c7b4007d022e&quot;,
+    &quot;record_hash&quot;: &quot;cf8133813c7772fb3acea08a5fecf9a5c75d7cce6370790ab223631ffb2782d8&quot;,
+    &quot;record_id&quot;: &quot;2154d9f3-f3bf-40fa-9ffb-13f2aab00c35&quot;,
+    &quot;signature&quot;: &quot;d120bfa10dde7b4f04287a152107cddd274276c9aa19ec1daaa80f74fed7ab92&quot;
+  },
+  &quot;created_at&quot;: &quot;2026-11-06T14:51:03.519099Z&quot;,
+  &quot;decision&quot;: &quot;deny&quot;,
+  &quot;evaluated_at&quot;: &quot;2026-11-06T14:51:03.518806Z&quot;,
+  &quot;evidence_assessments&quot;: [
+    {
+      &quot;accepted&quot;: true,
+      &quot;evidence_id&quot;: &quot;business-001&quot;,
+      &quot;reasons&quot;: [
+        &quot;authority=90/100&quot;,
+        &quot;current source version&quot;,
+        &quot;signed evidence&quot;,
+        &quot;substantive content&quot;,
+        &quot;contains policy reference language&quot;,
+        &quot;demo metadata adapter; authenticity not established&quot;
+      ],
+      &quot;score&quot;: 0.965
+    },
+    {
+      &quot;accepted&quot;: true,
+      &quot;evidence_id&quot;: &quot;risk-001&quot;,
+      &quot;reasons&quot;: [
+        &quot;authority=95/100&quot;,
+        &quot;current source version&quot;,
+        &quot;signed evidence&quot;,
+        &quot;substantive content&quot;,
+        &quot;contains policy reference language&quot;,
+        &quot;demo metadata adapter; authenticity not established&quot;
+      ],
+      &quot;score&quot;: 0.9825
+    }
+  ],
+  &quot;evidence_verifier_id&quot;: &quot;db4a74a797bee6cc27027298c7a2010cc24e42f2fc382197cd4b20499db9c79d&quot;,
+  &quot;matched_rules&quot;: [
+    {
+      &quot;decision&quot;: &quot;review&quot;,
+      &quot;matched&quot;: true,
+      &quot;missing_evidence&quot;: [],
+      &quot;policy_id&quot;: &quot;enterprise-ai-governance&quot;,
+      &quot;policy_version&quot;: &quot;1.0.0&quot;,
+      &quot;reasons&quot;: [
+        &quot;High-impact AI actions require documented evidence and human oversight.&quot;
+      ],
+      &quot;review_queue&quot;: &quot;ai-governance-board&quot;,
+      &quot;rule_id&quot;: &quot;high-impact-human-review&quot;
+    },
+    {
+      &quot;decision&quot;: &quot;deny&quot;,
+      &quot;matched&quot;: true,
+      &quot;missing_evidence&quot;: [],
+      &quot;policy_id&quot;: &quot;enterprise-ai-governance&quot;,
+      &quot;policy_version&quot;: &quot;1.0.0&quot;,
+      &quot;reasons&quot;: [
+        &quot;External transfer of protected information is prohibited.&quot;
+      ],
+      &quot;review_queue&quot;: &quot;security-incident&quot;,
+      &quot;rule_id&quot;: &quot;prohibit-secret-exfiltration&quot;
+    }
+  ],
+  &quot;policy_set_hash&quot;: &quot;60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22&quot;,
+  &quot;reasons&quot;: [
+    &quot;High-impact AI actions require documented evidence and human oversight.&quot;,
+    &quot;External transfer of protected information is prohibited.&quot;
+  ],
+  &quot;request_id&quot;: &quot;14b9dec0-9b91-44dd-bf4b-5511b7b0e673&quot;,
+  &quot;review_queue&quot;: &quot;security-incident&quot;
+}</pre></div></div></details><details><summary>High-impact action with complete evidence</summary><p>Complete evidence does not auto-approve a high-impact action; it routes the case to accountable human review.</p><div class='code-grid'><div><h4>Request</h4><pre>{
+  &quot;action&quot;: &quot;approve&quot;,
+  &quot;agent_id&quot;: &quot;benefits-decision-agent&quot;,
+  &quot;context&quot;: {
+    &quot;data_classification&quot;: &quot;internal&quot;,
+    &quot;environment&quot;: &quot;test&quot;,
+    &quot;impact&quot;: &quot;high&quot;
+  },
+  &quot;evidence&quot;: [
+    {
+      &quot;authority&quot;: 90,
+      &quot;content&quot;: &quot;Policy requirement: the service owner documented purpose, affected users, expected benefit, and accountable ownership.&quot;,
+      &quot;current&quot;: true,
+      &quot;evidence_id&quot;: &quot;business-002&quot;,
+      &quot;evidence_type&quot;: &quot;business_justification&quot;,
+      &quot;signed&quot;: true,
+      &quot;source_id&quot;: &quot;case-management&quot;,
+      &quot;source_version&quot;: &quot;2026.7&quot;
+    },
+    {
+      &quot;authority&quot;: 95,
+      &quot;content&quot;: &quot;Risk control assessment covers bias, human oversight, security, privacy, fallback, and monitoring requirements.&quot;,
+      &quot;current&quot;: true,
+      &quot;evidence_id&quot;: &quot;risk-002&quot;,
+      &quot;evidence_type&quot;: &quot;risk_assessment&quot;,
+      &quot;signed&quot;: true,
+      &quot;source_id&quot;: &quot;risk-register&quot;,
+      &quot;source_version&quot;: &quot;2026.7&quot;
+    }
+  ],
+  &quot;resource&quot;: &quot;benefit-eligibility-case&quot;
+}</pre></div><div><h4>Response</h4><pre>{
+  &quot;audit&quot;: {
+    &quot;created_at&quot;: &quot;2026-11-06T14:51:03.520076Z&quot;,
+    &quot;previous_hash&quot;: &quot;cf8133813c7772fb3acea08a5fecf9a5c75d7cce6370790ab223631ffb2782d8&quot;,
+    &quot;record_hash&quot;: &quot;af05784654cfbfcb4ef5a3385a7456f4dd969711db9e036b0ffc9648c0e3cc74&quot;,
+    &quot;record_id&quot;: &quot;506b1349-9359-4e56-909d-d25851b5a066&quot;,
+    &quot;signature&quot;: &quot;42c217cdafd9161e9fbe21d1ed224d9e2649d4c11704e9235bc80a85a0d4b7e6&quot;
+  },
+  &quot;created_at&quot;: &quot;2026-11-06T14:51:03.520250Z&quot;,
+  &quot;decision&quot;: &quot;review&quot;,
+  &quot;evaluated_at&quot;: &quot;2026-11-06T14:51:03.519973Z&quot;,
+  &quot;evidence_assessments&quot;: [
+    {
+      &quot;accepted&quot;: true,
+      &quot;evidence_id&quot;: &quot;business-002&quot;,
+      &quot;reasons&quot;: [
+        &quot;authority=90/100&quot;,
+        &quot;current source version&quot;,
+        &quot;signed evidence&quot;,
+        &quot;substantive content&quot;,
+        &quot;contains policy reference language&quot;,
+        &quot;demo metadata adapter; authenticity not established&quot;
+      ],
+      &quot;score&quot;: 0.965
+    },
+    {
+      &quot;accepted&quot;: true,
+      &quot;evidence_id&quot;: &quot;risk-002&quot;,
+      &quot;reasons&quot;: [
+        &quot;authority=95/100&quot;,
+        &quot;current source version&quot;,
+        &quot;signed evidence&quot;,
+        &quot;substantive content&quot;,
+        &quot;contains policy reference language&quot;,
+        &quot;demo metadata adapter; authenticity not established&quot;
+      ],
+      &quot;score&quot;: 0.9825
+    }
+  ],
+  &quot;evidence_verifier_id&quot;: &quot;db4a74a797bee6cc27027298c7a2010cc24e42f2fc382197cd4b20499db9c79d&quot;,
+  &quot;matched_rules&quot;: [
+    {
+      &quot;decision&quot;: &quot;review&quot;,
+      &quot;matched&quot;: true,
+      &quot;missing_evidence&quot;: [],
+      &quot;policy_id&quot;: &quot;enterprise-ai-governance&quot;,
+      &quot;policy_version&quot;: &quot;1.0.0&quot;,
+      &quot;reasons&quot;: [
+        &quot;High-impact AI actions require documented evidence and human oversight.&quot;
+      ],
+      &quot;review_queue&quot;: &quot;ai-governance-board&quot;,
+      &quot;rule_id&quot;: &quot;high-impact-human-review&quot;
+    }
+  ],
+  &quot;policy_set_hash&quot;: &quot;60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22&quot;,
+  &quot;reasons&quot;: [
+    &quot;High-impact AI actions require documented evidence and human oversight.&quot;
+  ],
+  &quot;request_id&quot;: &quot;462f1a54-b4ea-43ce-bdef-b6e4ca01b706&quot;,
+  &quot;review_queue&quot;: &quot;ai-governance-board&quot;
+}</pre></div></div></details><details><summary>High-impact action missing risk assessment</summary><p>The review response must identify the exact missing evidence type.</p><div class='code-grid'><div><h4>Request</h4><pre>{
+  &quot;action&quot;: &quot;approve&quot;,
+  &quot;agent_id&quot;: &quot;benefits-decision-agent&quot;,
+  &quot;context&quot;: {
+    &quot;environment&quot;: &quot;test&quot;,
+    &quot;impact&quot;: &quot;high&quot;
+  },
+  &quot;evidence&quot;: [
+    {
+      &quot;authority&quot;: 90,
+      &quot;content&quot;: &quot;Policy requirement: the business owner documented purpose, scope, expected benefit, and accountable ownership.&quot;,
+      &quot;current&quot;: true,
+      &quot;evidence_id&quot;: &quot;business-003&quot;,
+      &quot;evidence_type&quot;: &quot;business_justification&quot;,
+      &quot;signed&quot;: true,
+      &quot;source_id&quot;: &quot;case-management&quot;,
+      &quot;source_version&quot;: &quot;2026.7&quot;
+    }
+  ],
+  &quot;resource&quot;: &quot;benefit-eligibility-case&quot;
+}</pre></div><div><h4>Response</h4><pre>{
+  &quot;audit&quot;: {
+    &quot;created_at&quot;: &quot;2026-11-06T14:51:03.521183Z&quot;,
+    &quot;previous_hash&quot;: &quot;af05784654cfbfcb4ef5a3385a7456f4dd969711db9e036b0ffc9648c0e3cc74&quot;,
+    &quot;record_hash&quot;: &quot;c2679b8a2c003f13fca580923b511fa9b86ce6285f49ce43a987131fad9dbe83&quot;,
+    &quot;record_id&quot;: &quot;485111aa-917b-4174-a522-d8c9f53131f1&quot;,
+    &quot;signature&quot;: &quot;be408f1e7ed16a88f5953a319d43b9972c152673d6e05b7851a02011d84781a8&quot;
+  },
+  &quot;created_at&quot;: &quot;2026-11-06T14:51:03.521337Z&quot;,
+  &quot;decision&quot;: &quot;review&quot;,
+  &quot;evaluated_at&quot;: &quot;2026-11-06T14:51:03.521093Z&quot;,
+  &quot;evidence_assessments&quot;: [
+    {
+      &quot;accepted&quot;: true,
+      &quot;evidence_id&quot;: &quot;business-003&quot;,
+      &quot;reasons&quot;: [
+        &quot;authority=90/100&quot;,
+        &quot;current source version&quot;,
+        &quot;signed evidence&quot;,
+        &quot;substantive content&quot;,
+        &quot;contains policy reference language&quot;,
+        &quot;demo metadata adapter; authenticity not established&quot;
+      ],
+      &quot;score&quot;: 0.965
+    }
+  ],
+  &quot;evidence_verifier_id&quot;: &quot;db4a74a797bee6cc27027298c7a2010cc24e42f2fc382197cd4b20499db9c79d&quot;,
+  &quot;matched_rules&quot;: [
+    {
+      &quot;decision&quot;: &quot;review&quot;,
+      &quot;matched&quot;: true,
+      &quot;missing_evidence&quot;: [
+        &quot;risk_assessment&quot;
+      ],
+      &quot;policy_id&quot;: &quot;enterprise-ai-governance&quot;,
+      &quot;policy_version&quot;: &quot;1.0.0&quot;,
+      &quot;reasons&quot;: [
+        &quot;High-impact AI actions require documented evidence and human oversight.&quot;,
+        &quot;Missing required evidence: risk_assessment&quot;
+      ],
+      &quot;review_queue&quot;: &quot;ai-governance-board&quot;,
+      &quot;rule_id&quot;: &quot;high-impact-human-review&quot;
+    }
+  ],
+  &quot;policy_set_hash&quot;: &quot;60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22&quot;,
+  &quot;reasons&quot;: [
+    &quot;High-impact AI actions require documented evidence and human oversight.&quot;,
+    &quot;Missing required evidence: risk_assessment&quot;
+  ],
+  &quot;request_id&quot;: &quot;c1125c4a-8c8a-4839-9829-295ec0422d8a&quot;,
+  &quot;review_queue&quot;: &quot;ai-governance-board&quot;
+}</pre></div></div></details><details><summary>Production deployment with change controls</summary><p>A production-changing agent must be routed to the production change queue even with complete evidence.</p><div class='code-grid'><div><h4>Request</h4><pre>{
+  &quot;action&quot;: &quot;deploy&quot;,
+  &quot;agent_id&quot;: &quot;deployment-agent&quot;,
+  &quot;context&quot;: {
+    &quot;data_classification&quot;: &quot;internal&quot;,
+    &quot;environment&quot;: &quot;production&quot;,
+    &quot;impact&quot;: &quot;medium&quot;
+  },
+  &quot;evidence&quot;: [
+    {
+      &quot;authority&quot;: 95,
+      &quot;content&quot;: &quot;Approved change control CHG-2026-0042 defines implementation, validation, owner, maintenance window, and authorization.&quot;,
+      &quot;current&quot;: true,
+      &quot;evidence_id&quot;: &quot;change-001&quot;,
+      &quot;evidence_type&quot;: &quot;change_ticket&quot;,
+      &quot;signed&quot;: true,
+      &quot;source_id&quot;: &quot;change-management&quot;,
+      &quot;source_version&quot;: &quot;CHG-2026-0042&quot;
+    },
+    {
+      &quot;authority&quot;: 90,
+      &quot;content&quot;: &quot;Control runbook defines rollback triggers, database restoration, deployment reversal, validation, and responsible operators.&quot;,
+      &quot;current&quot;: true,
+      &quot;evidence_id&quot;: &quot;rollback-001&quot;,
+      &quot;evidence_type&quot;: &quot;rollback_plan&quot;,
+      &quot;signed&quot;: true,
+      &quot;source_id&quot;: &quot;deployment-runbook&quot;,
+      &quot;source_version&quot;: &quot;2026.8&quot;
+    }
+  ],
+  &quot;resource&quot;: &quot;customer-api&quot;
+}</pre></div><div><h4>Response</h4><pre>{
+  &quot;audit&quot;: {
+    &quot;created_at&quot;: &quot;2026-11-06T14:51:03.522376Z&quot;,
+    &quot;previous_hash&quot;: &quot;c2679b8a2c003f13fca580923b511fa9b86ce6285f49ce43a987131fad9dbe83&quot;,
+    &quot;record_hash&quot;: &quot;171fb467e8af8d162e64454c2c3b088e8999ba3d79c0898436fa57ce1d3665f1&quot;,
+    &quot;record_id&quot;: &quot;439fded5-cb66-46f6-87c3-73d467544423&quot;,
+    &quot;signature&quot;: &quot;62114dcd9ebd530095cc71a604ac5bddd37cffcf606ac3215a57bcdacef8e798&quot;
+  },
+  &quot;created_at&quot;: &quot;2026-11-06T14:51:03.522497Z&quot;,
+  &quot;decision&quot;: &quot;review&quot;,
+  &quot;evaluated_at&quot;: &quot;2026-11-06T14:51:03.522280Z&quot;,
+  &quot;evidence_assessments&quot;: [
+    {
+      &quot;accepted&quot;: true,
+      &quot;evidence_id&quot;: &quot;change-001&quot;,
+      &quot;reasons&quot;: [
+        &quot;authority=95/100&quot;,
+        &quot;current source version&quot;,
+        &quot;signed evidence&quot;,
+        &quot;substantive content&quot;,
+        &quot;contains policy reference language&quot;,
+        &quot;demo metadata adapter; authenticity not established&quot;
+      ],
+      &quot;score&quot;: 0.9825
+    },
+    {
+      &quot;accepted&quot;: true,
+      &quot;evidence_id&quot;: &quot;rollback-001&quot;,
+      &quot;reasons&quot;: [
+        &quot;authority=90/100&quot;,
+        &quot;current source version&quot;,
+        &quot;signed evidence&quot;,
+        &quot;substantive content&quot;,
+        &quot;contains policy reference language&quot;,
+        &quot;demo metadata adapter; authenticity not established&quot;
+      ],
+      &quot;score&quot;: 0.965
+    }
+  ],
+  &quot;evidence_verifier_id&quot;: &quot;db4a74a797bee6cc27027298c7a2010cc24e42f2fc382197cd4b20499db9c79d&quot;,
+  &quot;matched_rules&quot;: [
+    {
+      &quot;decision&quot;: &quot;review&quot;,
+      &quot;matched&quot;: true,
+      &quot;missing_evidence&quot;: [],
+      &quot;policy_id&quot;: &quot;enterprise-ai-governance&quot;,
+      &quot;policy_version&quot;: &quot;1.0.0&quot;,
+      &quot;reasons&quot;: [
+        &quot;Production-changing actions require approved change evidence and rollback planning.&quot;
+      ],
+      &quot;review_queue&quot;: &quot;production-change&quot;,
+      &quot;rule_id&quot;: &quot;production-agent-change&quot;
+    }
+  ],
+  &quot;policy_set_hash&quot;: &quot;60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22&quot;,
+  &quot;reasons&quot;: [
+    &quot;Production-changing actions require approved change evidence and rollback planning.&quot;
+  ],
+  &quot;request_id&quot;: &quot;0b28702a-a4be-42f3-9e24-4229406a4308&quot;,
+  &quot;review_queue&quot;: &quot;production-change&quot;
+}</pre></div></div></details><details><summary>Production deletion without rollback plan</summary><p>Destructive production action must explicitly report the missing rollback plan.</p><div class='code-grid'><div><h4>Request</h4><pre>{
+  &quot;action&quot;: &quot;delete&quot;,
+  &quot;agent_id&quot;: &quot;operations-agent&quot;,
+  &quot;context&quot;: {
+    &quot;environment&quot;: &quot;production&quot;,
+    &quot;impact&quot;: &quot;medium&quot;
+  },
+  &quot;evidence&quot;: [
+    {
+      &quot;authority&quot;: 95,
+      &quot;content&quot;: &quot;Approved change control CHG-2026-0055 documents scope, owner, implementation window, and authorization.&quot;,
+      &quot;current&quot;: true,
+      &quot;evidence_id&quot;: &quot;change-002&quot;,
+      &quot;evidence_type&quot;: &quot;change_ticket&quot;,
+      &quot;signed&quot;: true,
+      &quot;source_id&quot;: &quot;change-management&quot;,
+      &quot;source_version&quot;: &quot;CHG-2026-0055&quot;
+    }
+  ],
+  &quot;resource&quot;: &quot;production-index&quot;
+}</pre></div><div><h4>Response</h4><pre>{
+  &quot;audit&quot;: {
+    &quot;created_at&quot;: &quot;2026-11-06T14:51:03.523510Z&quot;,
+    &quot;previous_hash&quot;: &quot;171fb467e8af8d162e64454c2c3b088e8999ba3d79c0898436fa57ce1d3665f1&quot;,
+    &quot;record_hash&quot;: &quot;e681a0e9f7f6b673d53c4700d4208955ff0b01481d74216ccf7541f92a9b44a2&quot;,
+    &quot;record_id&quot;: &quot;32fe128b-167e-42e1-af98-997e9b7908c6&quot;,
+    &quot;signature&quot;: &quot;b696debf7e661813f199abda8de05bcc022c7093474b3f17153f722338f1bfed&quot;
+  },
+  &quot;created_at&quot;: &quot;2026-11-06T14:51:03.523611Z&quot;,
+  &quot;decision&quot;: &quot;review&quot;,
+  &quot;evaluated_at&quot;: &quot;2026-11-06T14:51:03.523433Z&quot;,
+  &quot;evidence_assessments&quot;: [
+    {
+      &quot;accepted&quot;: true,
+      &quot;evidence_id&quot;: &quot;change-002&quot;,
+      &quot;reasons&quot;: [
+        &quot;authority=95/100&quot;,
+        &quot;current source version&quot;,
+        &quot;signed evidence&quot;,
+        &quot;substantive content&quot;,
+        &quot;contains policy reference language&quot;,
+        &quot;demo metadata adapter; authenticity not established&quot;
+      ],
+      &quot;score&quot;: 0.9825
+    }
+  ],
+  &quot;evidence_verifier_id&quot;: &quot;db4a74a797bee6cc27027298c7a2010cc24e42f2fc382197cd4b20499db9c79d&quot;,
+  &quot;matched_rules&quot;: [
+    {
+      &quot;decision&quot;: &quot;review&quot;,
+      &quot;matched&quot;: true,
+      &quot;missing_evidence&quot;: [
+        &quot;rollback_plan&quot;
+      ],
+      &quot;policy_id&quot;: &quot;enterprise-ai-governance&quot;,
+      &quot;policy_version&quot;: &quot;1.0.0&quot;,
+      &quot;reasons&quot;: [
+        &quot;Production-changing actions require approved change evidence and rollback planning.&quot;,
+        &quot;Missing required evidence: rollback_plan&quot;
+      ],
+      &quot;review_queue&quot;: &quot;production-change&quot;,
+      &quot;rule_id&quot;: &quot;production-agent-change&quot;
+    }
+  ],
+  &quot;policy_set_hash&quot;: &quot;60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22&quot;,
+  &quot;reasons&quot;: [
+    &quot;Production-changing actions require approved change evidence and rollback planning.&quot;,
+    &quot;Missing required evidence: rollback_plan&quot;
+  ],
+  &quot;request_id&quot;: &quot;04cfc489-d949-4e98-912f-8b5bc60719c7&quot;,
+  &quot;review_queue&quot;: &quot;production-change&quot;
+}</pre></div></div></details><details><summary>Unknown action uses fail-safe review</summary><p>An action outside the active policy set must never be silently allowed.</p><div class='code-grid'><div><h4>Request</h4><pre>{
+  &quot;action&quot;: &quot;translate&quot;,
+  &quot;agent_id&quot;: &quot;experimental-agent&quot;,
+  &quot;context&quot;: {
+    &quot;environment&quot;: &quot;test&quot;,
+    &quot;impact&quot;: &quot;medium&quot;
+  },
+  &quot;evidence&quot;: [],
+  &quot;resource&quot;: &quot;internal-document&quot;
+}</pre></div><div><h4>Response</h4><pre>{
+  &quot;audit&quot;: {
+    &quot;created_at&quot;: &quot;2026-11-06T14:51:03.524820Z&quot;,
+    &quot;previous_hash&quot;: &quot;e681a0e9f7f6b673d53c4700d4208955ff0b01481d74216ccf7541f92a9b44a2&quot;,
+    &quot;record_hash&quot;: &quot;49031c5a7fabe2322b1515d9007e2a614ea13869fa4494e25c968ec4fcf7c2ef&quot;,
+    &quot;record_id&quot;: &quot;a6c20c10-d753-45dd-a496-2c4a7ce0beb7&quot;,
+    &quot;signature&quot;: &quot;a0d18a39821b846e82ded45bf51028071a1ec99b7b15679c1e86eeb6284cf333&quot;
+  },
+  &quot;created_at&quot;: &quot;2026-11-06T14:51:03.524925Z&quot;,
+  &quot;decision&quot;: &quot;review&quot;,
+  &quot;evaluated_at&quot;: &quot;2026-11-06T14:51:03.524767Z&quot;,
+  &quot;evidence_assessments&quot;: [],
+  &quot;evidence_verifier_id&quot;: &quot;db4a74a797bee6cc27027298c7a2010cc24e42f2fc382197cd4b20499db9c79d&quot;,
+  &quot;matched_rules&quot;: [],
+  &quot;policy_set_hash&quot;: &quot;60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22&quot;,
+  &quot;reasons&quot;: [
+    &quot;No active policy rule matched; fail-safe human review required&quot;
+  ],
+  &quot;request_id&quot;: &quot;b1824977-aadb-4ba1-be59-fdde96809549&quot;,
+  &quot;review_queue&quot;: &quot;governance-default&quot;
+}</pre></div></div></details><details><summary>Unclassified external sending is reviewed</summary><p>Even when data is public, an uncovered external-send action is routed to review instead of being implicitly permitted.</p><div class='code-grid'><div><h4>Request</h4><pre>{
+  &quot;action&quot;: &quot;send_external&quot;,
+  &quot;agent_id&quot;: &quot;communications-agent&quot;,
+  &quot;context&quot;: {
+    &quot;data_classification&quot;: &quot;public&quot;,
+    &quot;environment&quot;: &quot;production&quot;,
+    &quot;impact&quot;: &quot;medium&quot;
+  },
+  &quot;evidence&quot;: [],
+  &quot;resource&quot;: &quot;public-announcement&quot;
+}</pre></div><div><h4>Response</h4><pre>{
+  &quot;audit&quot;: {
+    &quot;created_at&quot;: &quot;2026-11-06T14:51:03.526172Z&quot;,
+    &quot;previous_hash&quot;: &quot;49031c5a7fabe2322b1515d9007e2a614ea13869fa4494e25c968ec4fcf7c2ef&quot;,
+    &quot;record_hash&quot;: &quot;eda546409fc8ad3d05698b06712ae38475f179a2e6d839f53f65f4f605681130&quot;,
+    &quot;record_id&quot;: &quot;bc1d9592-392c-4ffd-8941-d4c59b92407f&quot;,
+    &quot;signature&quot;: &quot;f3021f2922372b28c93a3638c7a68c868d994d7d368cd805e746ca4e688d68d3&quot;
+  },
+  &quot;created_at&quot;: &quot;2026-11-06T14:51:03.526306Z&quot;,
+  &quot;decision&quot;: &quot;review&quot;,
+  &quot;evaluated_at&quot;: &quot;2026-11-06T14:51:03.526126Z&quot;,
+  &quot;evidence_assessments&quot;: [],
+  &quot;evidence_verifier_id&quot;: &quot;db4a74a797bee6cc27027298c7a2010cc24e42f2fc382197cd4b20499db9c79d&quot;,
+  &quot;matched_rules&quot;: [],
+  &quot;policy_set_hash&quot;: &quot;60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22&quot;,
+  &quot;reasons&quot;: [
+    &quot;No active policy rule matched; fail-safe human review required&quot;
+  ],
+  &quot;request_id&quot;: &quot;10d983b6-848d-4d23-81f5-d66e22f4b1b5&quot;,
+  &quot;review_queue&quot;: &quot;governance-default&quot;
+}</pre></div></div></details><details><summary>Invalid API request is rejected</summary><p>The API must reject a request that omits the required agent identifier.</p><div class='code-grid'><div><h4>Request</h4><pre>{
+  &quot;action&quot;: &quot;summarize&quot;,
+  &quot;context&quot;: {
+    &quot;impact&quot;: &quot;low&quot;
+  },
+  &quot;evidence&quot;: []
+}</pre></div><div><h4>Response</h4><pre>{
+  &quot;detail&quot;: [
+    {
+      &quot;input&quot;: {
+        &quot;action&quot;: &quot;summarize&quot;,
+        &quot;context&quot;: {
+          &quot;impact&quot;: &quot;low&quot;
+        },
+        &quot;evidence&quot;: []
+      },
+      &quot;loc&quot;: [
+        &quot;body&quot;,
+        &quot;agent_id&quot;
+      ],
+      &quot;msg&quot;: &quot;Field required&quot;,
+      &quot;type&quot;: &quot;missing&quot;
+    }
+  ]
+}</pre></div></div></details></section>
+<footer>Generated by <code>python -m benchmark.runner</code>. Machine-readable results are available beside this report in <code>benchmark-results.json</code>.</footer>
+</main></body></html>

@@ -8,8 +8,9 @@ than adding an LLM to the final authorization path.
 ### GovernBench-v1
 
 - five synthetic domains with adversarial and temporal cases;
-- 2,000 cases per seed and 30 independent seeds by default;
-- learned evidence calibration;
+- 2,000 generated cases per seed and 30 seeds by default (36,000 training,
+  24,000 held-out evaluation cases);
+- learned thresholded evidence scores, with calibration error reported;
 - RBAC, ABAC and VeriWeave deterministic comparisons;
 - false-allow/deny/review, macro-F1, GASR, Brier, ECE, AUROC and AUPRC;
 - six ablations, counterfactuals, governance certificates and temporal replay.
@@ -34,10 +35,17 @@ uses a later held-out calibration profile (AUROC 0.9840, AUPRC 0.9896, Brier
 0.1226, ECE 0.2253, threshold 0.7600), so the historical `research-v1`
 calibration values should not be treated as Table 8 of the paper.
 
+GovernBench tests specification conformance and fault injection. Its oracle
+shares the governor's intended semantics and the RBAC/ABAC gap is structurally
+favorable for the full governor. No enterprise-population or legal-effectiveness
+claim follows from the synthetic results. See [the revision](docs/REVISION_2026_11.md)
+for direct tamper/replay tests, scoped evidence admission, larger-set experiments,
+reporting corrections and the outstanding raw human-study records.
+
 ### EU/Austria publication validation
 
-The publication layer adds a separate **150-case regulation-grounded expert
-validation set**:
+The publication layer adds a separate **150-case constructed regulation-grounded
+comparison bank**; actual annotator expertise still requires author disclosure:
 
 - 50 public-administration actions;
 - 50 enterprise IT / DevOps actions;

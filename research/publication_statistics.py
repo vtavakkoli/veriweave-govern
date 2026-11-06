@@ -9,7 +9,7 @@ import random
 from pathlib import Path
 from statistics import fmean
 
-from research.metrics import classification_metrics
+from research.metrics import classification_metrics, safety_metrics
 
 DECISIONS = {"allow", "review", "deny"}
 METADATA_FIELDS = {
@@ -21,7 +21,7 @@ METADATA_FIELDS = {
     "annotator_b",
     "adjudicated_label",
 }
-CI_METRICS = ("accuracy", "macro_f1", "false_allow_rate")
+CI_METRICS = ("accuracy", "macro_f1", "false_review_rate")
 
 
 def load_predictions(path: Path) -> tuple[list[dict[str, str]], list[str]]:
@@ -85,7 +85,7 @@ def _bootstrap_metrics(
         for name in CI_METRICS:
             distributions[name].append(float(metrics[name]))
     point = classification_metrics(truth, predicted)
-    return {
+    result = {
         name: {
             "estimate": float(point[name]),
             "ci95_low": _percentile(distributions[name], 0.025),
@@ -93,6 +93,10 @@ def _bootstrap_metrics(
         }
         for name in CI_METRICS
     }
+    exact = safety_metrics(truth, predicted)
+    for name in ("false_allow_rate", "conditional_unsafe_allow_rate"):
+        result[name] = exact[name]
+    return result
 
 
 def _paired_accuracy_difference(
@@ -215,7 +219,7 @@ def build_report(
         }
 
     return {
-        "schema": "veriweave-publication-statistics/v1",
+        "schema": "veriweave-publication-statistics/v2",
         "label_status": label_status,
         "configuration": {
             "cases": len(rows),
@@ -226,6 +230,7 @@ def build_report(
             "multiple_testing": "Holm-Bonferroni over exact two-sided McNemar comparisons",
         },
         "metrics": metrics,
+        "reference_class_counts": {label: truth.count(label) for label in sorted(DECISIONS)},
         "paired_comparisons": comparisons,
         "per_domain": per_domain,
         "scientific_boundary": (
@@ -242,12 +247,19 @@ def render_html(report: dict[str, object]) -> str:
         accuracy = metrics["accuracy"]
         macro_f1 = metrics["macro_f1"]
         false_allow = metrics["false_allow_rate"]
+        conditional = metrics["conditional_unsafe_allow_rate"]
+        conditional_text = (
+            f"{conditional['events']}/{conditional['trials']} "
+            f"[{conditional['ci95_low']:.4f}, {conditional['ci95_high']:.4f}]"
+            if conditional["trials"] else "undefined (no non-allow references)"
+        )
         rows.append(
             "<tr>"
             f"<td><b>{html.escape(method)}</b></td>"
             f"<td>{accuracy['estimate']:.4f} [{accuracy['ci95_low']:.4f}, {accuracy['ci95_high']:.4f}]</td>"
             f"<td>{macro_f1['estimate']:.4f} [{macro_f1['ci95_low']:.4f}, {macro_f1['ci95_high']:.4f}]</td>"
             f"<td>{false_allow['estimate']:.4f} [{false_allow['ci95_low']:.4f}, {false_allow['ci95_high']:.4f}]</td>"
+            f"<td>{conditional_text}</td>"
             "</tr>"
         )
     comparison_rows = []
@@ -277,8 +289,10 @@ table{{width:100%;border-collapse:collapse;margin:16px 0 28px}}td,th{{padding:10
 <h1>VeriWeave publication statistics</h1>
 <p><b>Label status:</b> <code>{status}</code></p>
 <p class="note">{boundary}</p>
-<h2>Bootstrap 95% confidence intervals</h2>
-<table><tr><th>Method</th><th>Accuracy</th><th>Macro-F1</th><th>False-Allow</th></tr>{''.join(rows)}</table>
+<h2>95% confidence intervals</h2>
+<p>Accuracy/F1: case bootstrap. Unsafe allows: exact binomial intervals, conditional on an IID
+case process. These constructed cases do not establish a deployment-population safety bound.</p>
+<table><tr><th>Method</th><th>Accuracy</th><th>Macro-F1</th><th>False-Allow / all cases</th><th>Unsafe-Allow / non-allow cases (exact)</th></tr>{''.join(rows)}</table>
 <h2>Paired comparisons against {reference}</h2>
 <table><tr><th>Baseline</th><th>Accuracy difference [95% CI]</th><th>{reference} only correct</th><th>Baseline only correct</th><th>McNemar p</th><th>Holm-adjusted p</th></tr>{''.join(comparison_rows)}</table>
 <p>Bootstrap samples: <b>{report['configuration']['bootstrap_samples']}</b> · seed: <b>{report['configuration']['bootstrap_seed']}</b></p>
