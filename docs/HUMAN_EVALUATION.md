@@ -147,7 +147,34 @@ Until all required human labels exist, reports remain explicitly marked
 `provisional-regulation-grounded` / **DRAFT — HUMAN VALIDATION REQUIRED** and
 must not be described as human validated.
 
-## Broader practitioner study
+## Fixed evaluation bank and review budget
+
+The 150-case bank is for evaluation of frozen method predictions. Its human
+labels are not a training or fine-tuning corpus and, under the reported freeze
+protocol, are not used for prompt, policy or threshold selection. The research
+evidence calibrator is trained separately on synthetic GovernBench cases.
+Annotator pilot/training disclosures concern the labeling procedure and are
+separate from AI-model training.
+
+The authors confirm that the human-review budget is fixed and cannot be
+increased for this resubmission. Further independently reviewed cases would
+require additional expert annotation expenditure. The current revision retains
+150 cases, 50 per domain, with its uncertainty and coverage limits stated.
+Supplying the original worksheets and actual annotator disclosures is a
+transparency task; it does not entail recruiting more annotators or new cases.
+
+There is no universal statistically sufficient case count. Adequacy depends on
+the intended estimand, precision/effect target, eligible class counts and sampling
+design. Repeated ratings do not double the independent case count. Zero unsafe
+allows among 70 non-allow reference cases gives a one-sided exact 95% upper
+bound of 4.19% and two-sided upper endpoint 5.13%, conditional on binomial
+assumptions. For illustration, zero-event one-sided upper bounds below 5% and
+1% require 59 and 299 eligible opportunities respectively. These are precision
+illustrations, not prespecified acceptable deployment risks or a retrospective
+power justification. Constructed-case coverage does not become representative
+merely by increasing the number of similar cases.
+
+## Broader practitioner study (separately funded future work)
 
 For a separate human-factors study, recruit practitioners across AI governance,
 security/architecture, compliance/risk and software engineering. Recommended

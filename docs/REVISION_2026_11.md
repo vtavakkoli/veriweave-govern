@@ -84,10 +84,20 @@ The audit computes confidence distributions and casewise agreement separately,
 hashes the supplied files, rejects duplicate/incomplete records and reports
 missing disclosures. See the detailed rubric in `docs/HUMAN_EVALUATION.md`.
 
-Before resubmission, supply those records, recompute the external comparison,
-confirm the Gemma confusion breakdown, and obtain independent domain review or
-retain the explicitly narrow claims in the manuscript. New naturally occurring
-cases and an independently curated evidence corpus remain open validation needs.
+Before resubmission, supply the existing records, recompute the external
+comparison and confirm the Gemma confusion breakdown. The 150-case bank is an
+evaluation set for frozen predictions, rather than training/fine-tuning data;
+the evidence calibrator is trained separately on synthetic cases. The authors
+confirm that the human-review budget is fixed and cannot be increased for this
+resubmission. Additional independent case collection would require separate
+resources and is not a promised experiment for the present scoped revision.
+Retain the narrow claims and report uncertainty for the existing bank. Sample
+adequacy is tied to an estimand, precision and sampling design, not a universal
+case-count cutoff. The 70 non-allow cases, rather than all 150 cases or 300
+ratings, determine the conditional unsafe-allow opportunity count. Naturally
+occurring cases and independently curated evidence remain possible separately
+funded work for broader claims. This budget constraint does not replace the
+need to disclose the original study's actual methods and records.
 
 ## Version and archival status
 
