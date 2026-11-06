@@ -68,21 +68,28 @@ study or real organizational evidence corpus is claimed.
 The original `results/paper-2026/paper-results.json` is retained unchanged as a
 record of what was submitted. New outputs live in `results/revision-2026-11/`.
 
-## Human-study facts still requiring author completion
+## Qualified expert annotation and confidentiality
 
-The supplied materials provide aggregate human-study results but not the raw
-completed workbooks or frozen comparator predictions. They do not document
-whether annotators are authors/external participants, actual expertise,
-recruitment, pilot/training, case-difficulty selection or casewise confidence
-agreement. Equal mean confidence and perfect label agreement cannot fill those
-gaps. No identities, qualifications, independence or new annotations have been
-invented.
+The authors confirm that annotation was completed by qualified domain experts
+with professional expertise relevant to the segments under review: public
+administration, enterprise IT/DevOps, and data/AI governance. Their identities
+remain confidential and are represented only as Annotator A and Annotator B.
+The manuscript reports domain-level qualifications and the blinded annotation
+procedure without publishing names or identifying biographies. The earlier
+wording that treated their domain qualifications as unconfirmed is superseded.
 
-Complete `research/validation/annotator-disclosures.template.json`, retain the
-original worksheets, and run `python -m research.annotation_audit --help`.
-The audit computes confidence distributions and casewise agreement separately,
-hashes the supplied files, rejects duplicate/incomplete records and reports
-missing disclosures. See the detailed rubric in `docs/HUMAN_EVALUATION.md`.
+The supplied materials contain aggregate human-study results rather than the
+completed row-level worksheets and frozen comparator predictions. Reproducing
+those historical metrics requires the existing pseudonymized records, not the
+annotators' public identities. The annotation-audit tool can compute confidence
+distributions and casewise agreement using anonymous case and annotator IDs.
+Equal aggregate means do not establish casewise confidence equality.
+
+The disclosure template records the confirmed expert qualification and the
+confidentiality policy. Any additional protocol facts must come from actual
+study records and can be described without identifying participants. No specific
+degrees, employers, years of experience or participant relationships are inferred
+from the qualification statement.
 
 Before resubmission, supply the existing records, recompute the external
 comparison and confirm the Gemma confusion breakdown. The 150-case bank is an
@@ -96,8 +103,8 @@ adequacy is tied to an estimand, precision and sampling design, not a universal
 case-count cutoff. The 70 non-allow cases, rather than all 150 cases or 300
 ratings, determine the conditional unsafe-allow opportunity count. Naturally
 occurring cases and independently curated evidence remain possible separately
-funded work for broader claims. This budget constraint does not replace the
-need to disclose the original study's actual methods and records.
+funded work for broader claims. The protocol and numerical records can be verified in pseudonymized form while
+preserving the experts' identities.
 
 ## Version and archival status
 

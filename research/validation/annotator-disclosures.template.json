@@ -1,11 +1,16 @@
 {
   "schema": "veriweave-annotator-disclosures/v1",
-  "status": "author-completion-required",
+  "status": "expert-qualification-confirmed; additional-protocol-metadata-template",
   "relationship_to_authors": null,
-  "professional_expertise": null,
+  "professional_expertise": "Qualified domain experts with professional expertise relevant to the segments under review: public administration, enterprise IT/DevOps, and data/AI governance.",
   "legal_governance_experience": null,
   "recruitment": null,
   "pilot_or_training": null,
   "case_difficulty_selection": null,
-  "instructions": "Record actual study facts for A and B. State explicitly whether each is an author, collaborator or external participant. If no pilot occurred, say so; do not infer it from agreement. Use pseudonymous descriptions, not unnecessary personal identifiers."
+  "instructions": "The expert qualification and identity-confidentiality statements are author-confirmed. Preserve the anonymous identifiers. Record additional protocol facts only from the actual study records; do not infer specific degrees, employers, years of experience, author/external relationships or training details. Public names are not required by this template.",
+  "annotator_identifiers": [
+    "Annotator A",
+    "Annotator B"
+  ],
+  "identity_disclosure": "Confidential. Do not publish names or identifying biographies; report qualifications at the relevant domain level."
 }

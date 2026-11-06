@@ -25,12 +25,14 @@ They intentionally omit `provisional_label`, `provisional_rationale`,
 
 ## Eligibility and independence
 
-Use two genuinely independent annotators. For a publication-quality validation,
-annotators should have documented familiarity with at least one relevant area:
-EU/Austrian public administration, privacy/data protection, AI governance,
-enterprise security/architecture, or IT/DevOps risk. Record only a pseudonymous
-annotator identifier in the research artifact; do not commit unnecessary
-personal data.
+The study's annotation was completed by two qualified domain experts with
+professional expertise relevant to the segments under review: public
+administration, enterprise IT/DevOps, and data/AI governance. Their identities
+remain confidential. Use only Annotator A and Annotator B in the manuscript
+and research artifact; do not publish names or identifying biographies.
+Report qualifications at the relevant domain level. Separately blinded labeling
+and independence from the author team are different methodological concepts;
+the qualification statement does not imply a particular participant relationship.
 
 Annotators must not discuss individual cases, provisional labels, model outputs
 or each other's decisions before both worksheets are frozen. They should work
@@ -87,12 +89,19 @@ answer as part of adjudication rather than silently replacing the original.
 
 ### Reviewer-requested disclosures
 
-Document for each annotator whether they are an author, collaborator or external
-participant; professional/domain expertise; relevant legal/governance experience;
-recruitment; pilot/training; and how case difficulty was selected. Separate
-independent labeling from independence of the author team. Do not infer expertise
-from the eligibility rule, or invent a pilot protocol retrospectively. Complete
-`research/validation/annotator-disclosures.template.json` with actual study facts.
+The public account states that qualified domain experts performed the
+annotation and describes their expertise at the relevant domain level. Their
+names and identifying biographies are intentionally withheld. Participant
+confidentiality is not an absence of qualification evidence: the expert
+qualification is confirmed by the authors.
+
+Describe actual protocol facts, such as separate blinding, rubric, case coverage,
+confidence recording and any pilot/training or difficulty-selection procedure,
+using anonymous identifiers. Additional facts must be supported by the original
+records; specific degrees, employers or author/external relationships must not
+be inferred. The disclosure template records the confirmed expert statement
+and identity-confidentiality policy. The audit reports unfilled protocol fields;
+it does not require participant names.
 
 The current case bank is researcher-constructed and contains explicit facts
 about prohibited conduct, evidence state and evaluation dates. Perfect agreement
@@ -160,8 +169,8 @@ The authors confirm that the human-review budget is fixed and cannot be
 increased for this resubmission. Further independently reviewed cases would
 require additional expert annotation expenditure. The current revision retains
 150 cases, 50 per domain, with its uncertainty and coverage limits stated.
-Supplying the original worksheets and actual annotator disclosures is a
-transparency task; it does not entail recruiting more annotators or new cases.
+Supplying the original pseudonymized worksheets and checking the anonymous
+protocol description is a transparency task; it does not entail recruiting more annotators or new cases.
 
 There is no universal statistically sufficient case count. Adequacy depends on
 the intended estimand, precision/effect target, eligible class counts and sampling

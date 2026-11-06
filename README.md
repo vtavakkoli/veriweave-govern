@@ -256,9 +256,10 @@ researcher labels for independent human ground truth.
 The supplied aggregate human-bank results give identical 0.8000 accuracy for
 VeriWeave, OPA and Cedar, compared with 0.9733 for the Gemma advisory comparator.
 This supports a safety-utility discussion and an architectural contribution,
-not superior decision quality over OPA/Cedar. Raw completed study workbooks,
-annotator relationships/qualifications and original frozen predictions still
-require author completion; see the revision document for reporting corrections.
+not superior decision quality over OPA/Cedar. Raw completed study workbooks and
+original frozen predictions still require author verification. The annotators
+were qualified domain experts and remain anonymous as Annotator A and Annotator B;
+see the revision document for reporting corrections and the confidentiality policy.
 
 See [`research/validation/README.md`](research/validation/README.md) and
 [`research/policy_baselines/README.md`](research/policy_baselines/README.md).
@@ -357,6 +358,13 @@ completed two-annotator validation of the 150 constructed regulation-grounded
 cases, but this does not establish real-world regulatory effectiveness.
 Organization-specific validation and broader external replication remain
 necessary.
+
+## Maintainer
+
+Dr. Vahid Tavakkoli serves as Senior Enterprise Architect at Wien Digital
+(Municipal Department 01, MA 01), City of Vienna, Austria, and is affiliated
+with the University of Klagenfurt. His work includes enterprise architecture
+and AI governance.
 
 ## Citation and license
 
