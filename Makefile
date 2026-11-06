@@ -3,6 +3,12 @@
 install:
 	python -m pip install -e ".[dev]"
 
+revision-validation:
+	python -m research.revision_validation --output results/revision-2026-11
+
+revision-http:
+	python -m research.service_validation --output results/revision-2026-11/service
+
 test:
 	pytest -q
 

@@ -5,13 +5,33 @@ from enum import StrEnum
 from typing import Any
 from uuid import uuid4
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class Decision(StrEnum):
     ALLOW = "allow"
     REVIEW = "review"
     DENY = "deny"
+
+
+class EvidenceAttestation(BaseModel):
+    key_id: str = Field(min_length=1, max_length=100)
+    issued_at: datetime
+    expires_at: datetime
+    tenant_id: str
+    agent_id: str
+    action: str
+    resource: str
+    request_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    signature: str = Field(max_length=128)
+
+    @model_validator(mode="after")
+    def validate_time_window(self) -> EvidenceAttestation:
+        if self.issued_at.tzinfo is None or self.expires_at.tzinfo is None:
+            raise ValueError("attestation timestamps must include a timezone")
+        if self.expires_at <= self.issued_at:
+            raise ValueError("attestation expiry must follow issuance")
+        return self
 
 
 class EvidenceItem(BaseModel):
@@ -24,6 +44,7 @@ class EvidenceItem(BaseModel):
     current: bool = True
     signed: bool = False
     metadata: dict[str, Any] = Field(default_factory=dict)
+    attestation: EvidenceAttestation | None = None
 
 
 class EvaluationRequest(BaseModel):
@@ -40,6 +61,15 @@ class EvaluationRequest(BaseModel):
     @classmethod
     def normalize_text(cls, value: str) -> str:
         return value.strip()
+
+    @model_validator(mode="after")
+    def validate_identifiers(self) -> EvaluationRequest:
+        ids = [item.evidence_id for item in self.evidence]
+        if len(ids) != len(set(ids)):
+            raise ValueError("evidence_id values must be unique within a request")
+        if not self.action:
+            raise ValueError("action must not be whitespace")
+        return self
 
 
 class EvidenceAssessment(BaseModel):
@@ -75,6 +105,13 @@ class EvaluationResponse(BaseModel):
     matched_rules: list[RuleResult]
     evidence_assessments: list[EvidenceAssessment]
     policy_set_hash: str
+    evaluated_at: datetime
+    evidence_verifier_id: str
     audit: AuditEnvelope
     review_queue: str | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class ReplayRequest(BaseModel):
+    record_id: str = Field(min_length=1, max_length=200)
+    expected_policy_set_hash: str | None = None

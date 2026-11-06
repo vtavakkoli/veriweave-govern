@@ -85,6 +85,49 @@ answer as part of adjudication rather than silently replacing the original.
 
 ## Reporting
 
+### Reviewer-requested disclosures
+
+Document for each annotator whether they are an author, collaborator or external
+participant; professional/domain expertise; relevant legal/governance experience;
+recruitment; pilot/training; and how case difficulty was selected. Separate
+independent labeling from independence of the author team. Do not infer expertise
+from the eligibility rule, or invent a pilot protocol retrospectively. Complete
+`research/validation/annotator-disclosures.template.json` with actual study facts.
+
+The current case bank is researcher-constructed and contains explicit facts
+about prohibited conduct, evidence state and evaluation dates. Perfect agreement
+can be compatible with relatively unambiguous cases and a shared rubric. It
+does not demonstrate performance on difficult organizational disagreements.
+
+The following hierarchy makes the operational rubric explicit:
+
+| Case facts at the stated evaluation date | Operational reference label |
+|---|---|
+| Explicit applicable prohibition or unacceptable protected-data disclosure | deny |
+| No prohibition, but accountable human assessment remains mandatory | review |
+| Missing, conflicting or insufficiently verified prerequisites | review |
+| Unknown action or unresolved scope/application-date ambiguity | review |
+| Clearly delegated action with all described prerequisites and no review requirement | allow |
+
+This table documents the operational rubric; authors must confirm whether it
+matches the instructions actually issued for the original study. Future studies
+must freeze the rubric before labeling and log any changes separately.
+
+Once both original worksheets are complete, run:
+
+```bash
+python -m research.annotation_audit \
+  --annotator-a results/publication/annotator-a.csv \
+  --annotator-b results/publication/annotator-b.csv \
+  --disclosures research/validation/annotator-disclosures.json \
+  --output results/publication/annotation-audit.json
+```
+
+The audit hashes its inputs and reports label agreement, confidence distributions
+and casewise confidence agreement separately. Equal means (e.g. 4.87/5) do not
+imply equal confidence on individual cases. Missing disclosures produce a
+nonzero exit status; no credentials or relationships are synthesized.
+
 At minimum report:
 
 - 150 total cases and 50 per domain;

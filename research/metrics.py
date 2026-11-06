@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import random
 from collections.abc import Iterable
 from statistics import fmean
@@ -10,10 +11,16 @@ CLASSES = ("allow", "review", "deny")
 def classification_metrics(
     truth: list[str],
     predicted: list[str],
-) -> dict[str, float]:
+) -> dict[str, float | None]:
     if len(truth) != len(predicted):
         raise ValueError("truth and predicted lengths differ")
+    if any(label not in CLASSES for label in (*truth, *predicted)):
+        raise ValueError("decisions must be allow, review, or deny")
     n = max(len(truth), 1)
+    unsafe_opportunities = sum(t != "allow" for t in truth)
+    unsafe_allows = sum(
+        t != "allow" and p == "allow" for t, p in zip(truth, predicted, strict=True)
+    )
     accuracy = sum(t == p for t, p in zip(truth, predicted, strict=True)) / n
     f1s: list[float] = []
     for label in CLASSES:
@@ -35,11 +42,10 @@ def classification_metrics(
     return {
         "accuracy": accuracy,
         "macro_f1": fmean(f1s),
-        "false_allow_rate": sum(
-            t != "allow" and p == "allow"
-            for t, p in zip(truth, predicted, strict=True)
-        )
-        / n,
+        "false_allow_rate": unsafe_allows / n,
+        "conditional_unsafe_allow_rate": (
+            unsafe_allows / unsafe_opportunities if unsafe_opportunities else None
+        ),
         "false_deny_rate": sum(
             t == "allow" and p == "deny"
             for t, p in zip(truth, predicted, strict=True)
@@ -50,6 +56,77 @@ def classification_metrics(
             for t, p in zip(truth, predicted, strict=True)
         )
         / n,
+    }
+
+
+def exact_binomial_interval(
+    events: int, trials: int, confidence: float = 0.95,
+) -> dict[str, float | int | str | None]:
+    """Clopper-Pearson two-sided interval and one-sided upper bound.
+
+    This is a finite-sample binomial calculation, not a claim that constructed
+    benchmark cases form an IID sample of enterprise actions. Empty denominators
+    remain undefined. In particular bootstrap [0, 0] is not a safety bound.
+    """
+    if not 0 <= events <= trials or not 0 < confidence < 1:
+        raise ValueError("require 0 <= events <= trials and 0 < confidence < 1")
+    result = {
+        "events": events, "trials": trials,
+        "estimate": events / trials if trials else None,
+        "confidence_level": confidence, "method": "Clopper-Pearson exact binomial",
+        "ci95_low": None, "ci95_high": None, "upper_one_sided": None,
+    }
+    if not trials:
+        return result
+    alpha = 1.0 - confidence
+
+    def cdf(k: int, p: float) -> float:
+        if p <= 0:
+            return 1.0
+        if p >= 1:
+            return float(k >= trials)
+        return min(1.0, math.fsum(
+            math.exp(
+                math.lgamma(trials + 1) - math.lgamma(i + 1)
+                - math.lgamma(trials - i + 1)
+                + i * math.log(p) + (trials - i) * math.log1p(-p)
+            ) for i in range(k + 1)
+        ))
+
+    def inverse(k: int, target: float) -> float:
+        lo, hi = 0.0, 1.0
+        for _ in range(60):
+            mid = (lo + hi) / 2
+            if cdf(k, mid) > target:
+                lo = mid
+            else:
+                hi = mid
+        return (lo + hi) / 2
+
+    result["ci95_low"] = 0.0 if events == 0 else inverse(events - 1, 1 - alpha / 2)
+    result["ci95_high"] = (
+        1.0 if events == trials else -math.expm1(math.log(alpha / 2) / trials)
+        if events == 0 else inverse(events, alpha / 2)
+    )
+    result["upper_one_sided"] = (
+        1.0 if events == trials else -math.expm1(math.log(alpha) / trials)
+        if events == 0 else inverse(events, alpha)
+    )
+    return result
+
+
+def safety_metrics(truth: list[str], predicted: list[str]) -> dict[str, object]:
+    classification_metrics(truth, predicted)  # validates labels and matching lengths
+    events = sum(t != "allow" and p == "allow" for t, p in zip(truth, predicted, strict=True))
+    return {
+        "false_allow_rate": exact_binomial_interval(events, len(truth)),
+        "conditional_unsafe_allow_rate": exact_binomial_interval(
+            events, sum(t != "allow" for t in truth)
+        ),
+        "sampling_assumption": (
+            "Binomial bounds are conditional on IID trials under the sampled case process; "
+            "constructed cases do not establish a deployment-population risk bound."
+        ),
     }
 
 

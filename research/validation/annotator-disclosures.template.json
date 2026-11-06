@@ -1,0 +1,11 @@
+{
+  "schema": "veriweave-annotator-disclosures/v1",
+  "status": "author-completion-required",
+  "relationship_to_authors": null,
+  "professional_expertise": null,
+  "legal_governance_experience": null,
+  "recruitment": null,
+  "pilot_or_training": null,
+  "case_difficulty_selection": null,
+  "instructions": "Record actual study facts for A and B. State explicitly whether each is an author, collaborator or external participant. If no pilot occurred, say so; do not infer it from agreement. Use pseudonymous descriptions, not unnecessary personal identifiers."
+}

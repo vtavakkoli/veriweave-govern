@@ -24,18 +24,23 @@ class AuditLedger:
     def __init__(self, path: Path, signing_key: str | None = None) -> None:
         self.path = path
         self.signing_key = signing_key.encode("utf-8") if signing_key else None
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.path.touch(exist_ok=True)
         self._head_hash = self._read_head_hash()
+        verification = self.verify()
+        if not verification["valid"]:
+            raise ValueError(f"refusing to append to corrupt audit history: {verification}")
 
     def _read_head_hash(self) -> str:
         """Read the persisted chain head once, primarily during process startup."""
         last = ""
+        self._record_count = 0
         with self.path.open("r", encoding="utf-8") as handle:
             for line in handle:
                 if line.strip():
                     last = json.loads(line)["record_hash"]
+                    self._record_count += 1
         return last or "0" * 64
 
     def append(self, payload: dict[str, Any]) -> AuditEnvelope:
@@ -63,6 +68,7 @@ class AuditLedger:
             # Update only after the append succeeds. A failed write must never advance the
             # in-memory chain head beyond durable ledger state.
             self._head_hash = record_hash
+            self._record_count += 1
 
             return AuditEnvelope(
                 record_id=record_id,
@@ -80,7 +86,27 @@ class AuditLedger:
                     rows.append(json.loads(line))
         return list(reversed(rows[-limit:]))
 
-    def verify(self) -> dict[str, Any]:
+    def checkpoint(self) -> dict[str, Any]:
+        """Export for storage outside this mutable ledger; this is not itself a signature."""
+        with self._lock:
+            return {"head_hash": self._head_hash, "records": self._record_count}
+
+    def checked_record(self, record_id: str) -> dict[str, Any]:
+        with self._lock:
+            verification = self.verify()
+            if not verification["valid"]:
+                raise ValueError("audit integrity verification failed")
+            with self.path.open("r", encoding="utf-8") as handle:
+                for line in handle:
+                    if line.strip():
+                        record = json.loads(line)
+                        if record["record_id"] == record_id:
+                            return record
+            raise ValueError("audit record unavailable")
+
+    def verify(
+        self, *, expected_head_hash: str | None = None, expected_records: int | None = None,
+    ) -> dict[str, Any]:
         # Verification takes a consistent snapshot relative to this process's appends.
         with self._lock:
             previous_hash = "0" * 64
@@ -89,13 +115,22 @@ class AuditLedger:
                 for line_number, line in enumerate(handle, start=1):
                     if not line.strip():
                         continue
-                    record = json.loads(line)
-                    body = {
-                        "record_id": record["record_id"],
-                        "created_at": record["created_at"],
-                        "previous_hash": record["previous_hash"],
-                        "payload": record["payload"],
-                    }
+                    try:
+                        record = json.loads(line)
+                        if not isinstance(record, dict) or set(record) != {
+                            "record_id", "created_at", "previous_hash", "payload",
+                            "record_hash", "signature",
+                        }:
+                            raise ValueError("invalid audit record schema")
+                        body = {
+                            "record_id": record["record_id"],
+                            "created_at": record["created_at"],
+                            "previous_hash": record["previous_hash"],
+                            "payload": record["payload"],
+                        }
+                    except (ValueError, TypeError, KeyError):
+                        return {"valid": False, "records": count,
+                                "failed_at_line": line_number, "reason": "malformed audit record"}
                     canonical = json.dumps(
                         body,
                         sort_keys=True,
@@ -109,14 +144,18 @@ class AuditLedger:
                         record["previous_hash"] != previous_hash
                         or record["record_hash"] != expected_hash
                     ):
-                        return {"valid": False, "records": count, "failed_at_line": line_number}
+                        return {"valid": False, "records": count, "failed_at_line": line_number,
+                                "reason": "hash chain mismatch"}
                     if self.signing_key:
                         expected_signature = hmac.new(
                             self.signing_key,
                             expected_hash.encode("utf-8"),
                             hashlib.sha256,
                         ).hexdigest()
-                        if not hmac.compare_digest(record.get("signature") or "", expected_signature):
+                        signature = record.get("signature")
+                        if not isinstance(signature, str) or not hmac.compare_digest(
+                            signature.encode("utf-8"), expected_signature.encode("utf-8")
+                        ):
                             return {
                                 "valid": False,
                                 "records": count,
@@ -125,4 +164,11 @@ class AuditLedger:
                             }
                     previous_hash = record["record_hash"]
                     count += 1
+            # The cached head detects truncation while this process is alive. After a
+            # restart a protected external checkpoint is required to detect suffix loss.
+            head = expected_head_hash if expected_head_hash is not None else self._head_hash
+            records = expected_records if expected_records is not None else self._record_count
+            if previous_hash != head or count != records:
+                return {"valid": False, "records": count, "head_hash": previous_hash,
+                        "reason": "checkpoint mismatch"}
             return {"valid": True, "records": count, "head_hash": previous_hash}

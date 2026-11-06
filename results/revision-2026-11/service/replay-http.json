@@ -1,0 +1,13 @@
+{
+  "historical_replay": {
+    "record_id": "1b214092-26f3-4133-8d17-26f45b2bf3eb",
+    "reproduced": true,
+    "decision": "review",
+    "policy_set_hash": "60d3e717af16a28a569eb55f8667283cf34cdfe77c4618863c57b8aeed8bcc22",
+    "evaluated_at": "2026-11-06T14:51:03.645576+00:00",
+    "evidence_verifier_id": "db4a74a797bee6cc27027298c7a2010cc24e42f2fc382197cd4b20499db9c79d"
+  },
+  "incorrect_version_status": 409,
+  "passed": true,
+  "scope": "Local single-instance HTTP, demo metadata verifier"
+}

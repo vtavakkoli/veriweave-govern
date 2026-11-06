@@ -1,7 +1,7 @@
 services:
   govern:
     build: .
-    image: veriweave-govern:0.4.0
+    image: veriweave-govern:0.5.0rc1
     ports:
       - "8080:8080"
     environment:
@@ -33,7 +33,7 @@ services:
     build:
       context: .
       dockerfile: benchmark/Dockerfile
-    image: veriweave-govern-benchmark:0.4.0
+    image: veriweave-govern-benchmark:0.5.0rc1
     depends_on:
       govern:
         condition: service_healthy
@@ -54,7 +54,7 @@ services:
   research:
     profiles: [research]
     build: .
-    image: veriweave-govern:0.4.0
+    image: veriweave-govern:0.5.0rc1
     command:
       - python
       - -m
@@ -93,7 +93,7 @@ services:
     build:
       context: .
       dockerfile: research/Dockerfile.publication
-    image: veriweave-govern-publication:0.4.0
+    image: veriweave-govern-publication:0.5.0rc1
     depends_on:
       - opa
     environment:
@@ -123,7 +123,7 @@ services:
     build:
       context: .
       dockerfile: benchmark/Dockerfile
-    image: veriweave-govern-benchmark:0.4.0
+    image: veriweave-govern-benchmark:0.5.0rc1
     entrypoint: ["python", "-m", "benchmark.load_matrix"]
     depends_on:
       govern:
@@ -147,7 +147,7 @@ services:
     build:
       context: .
       dockerfile: research/Dockerfile.publication
-    image: veriweave-govern-publication:0.4.0
+    image: veriweave-govern-publication:0.5.0rc1
     entrypoint: ["python", "-m", "research.full_pipeline"]
     depends_on:
       govern:

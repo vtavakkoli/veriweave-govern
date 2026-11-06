@@ -2,8 +2,7 @@ cff-version: 1.2.0
 message: "If you use VeriWeave Govern or GovernBench in research, please cite this software."
 title: "VeriWeave Govern"
 type: software
-version: 0.4.0
-date-released: 2026-08-17
+version: 0.5.0rc1
 license: Apache-2.0
 repository-code: "https://github.com/vtavakkoli/veriweave-govern"
 url: "https://github.com/vtavakkoli/veriweave-govern"
@@ -11,8 +10,8 @@ abstract: >-
   Deterministic runtime governance and evidence-control software for enterprise
   AI agents, with human-review routing, tamper-evident audit, GovernBench
   scientific evaluation, EU/Austria regulation-grounded validation,
-  independently executable OPA/Cedar/Ollama publication baselines, calibrated
-  evidence research, adversarial testing, temporal replay, and counterfactual
+  executable OPA/Cedar/Ollama publication baselines, thresholded evidence
+  research, direct tamper tests, historical replay, and counterfactual
   governance certificates.
 authors:
  - family-names: Mohsenzadegan

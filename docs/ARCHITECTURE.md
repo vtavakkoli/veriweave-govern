@@ -6,25 +6,11 @@ VeriWeave Govern is a decision-support and enforcement control plane. It does no
 
 ## Request flow
 
-```text
-Agent / workflow / API gateway
-             |
-             v
-      Evaluation API
-             |
-     +-------+--------+
-     |                |
-Policy matcher   Evidence verifier
-     |                |
-     +-------+--------+
-             |
-      Decision reducer
-      deny > review > allow
-             |
-     Human review routing
-             |
-   Hash-chained audit ledger
-```
+The API captures a single versioned policy snapshot and server evaluation time.
+Policy matching and evidence admission feed a deny-over-review-over-allow
+reducer. Review produces an external queue identifier; audit stores the complete
+decision state and historical replay bindings. The trusted router executes only
+a new live allow. See [integration](INTEGRATION.md) for the control flow.
 
 ## Design principles
 
@@ -32,8 +18,10 @@ Policy matcher   Evidence verifier
 2. **Deterministic enforcement:** policy matching does not depend on an LLM.
 3. **Evidence before execution:** allow rules can be escalated when required evidence is missing or weak.
 4. **Versioned accountability:** every response includes the active policy-set hash and policy versions.
-5. **Tamper evidence:** audit records form a SHA-256 chain and can carry HMAC signatures.
-6. **Human ownership:** review queues are policy-defined and explicit.
+5. **Tamper evidence:** SHA-256 chaining and optional HMAC authenticate records;
+   a protected head/count checkpoint is needed to detect truncation after restart.
+6. **Human ownership:** review queues are policy-defined and explicit; external
+   workflow systems implement actual human tasks and approvals.
 7. **Local-first deployment:** the MVP runs without external model or cloud dependencies.
 
 ## Integration path
